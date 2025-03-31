@@ -8,7 +8,6 @@ export class MultiSelect extends LitElement {
           display: inline-block;
           box-sizing: border-box;
 
-
       }
       #container {
           border: 1px solid black;
@@ -48,25 +47,51 @@ export class MultiSelect extends LitElement {
 
        `;
   @property({type: String})
-  someAttribute = 'default attribute';
+  name = 'default name';
 
+  @property({ attribute: false })
+  optionsData: Array<{ label: string, value: string }> = [];
 
+  @state()
+  hasSlotOptions: boolean = false;
 
-  protected firstUpdated(_changedProperties: PropertyValues): void {
-    const s = this.shadowRoot.getElementById("the-select");
+  @state()
+  optionList: HTMLOptionsCollection;
+
+  constructor() {
+    super();
+    //this.optionList = new HTMLOptionsCollection();
+  }
+
+  createOptions() {
+    const select_elem = this.shadowRoot.getElementById("the-select");
     const slot = this.shadowRoot.querySelector('slot');
+    //let childNodes = slot.assignedElements({flatten: true});
+    let childNodes = Array.from(this.children);
+    childNodes = childNodes.filter((n) => n.nodeName === "OPTION");
 
-    const childNodes = slot.assignedElements({flatten: true});
+    if (childNodes.length === 0) {
+      //no slottet content, try data attribute
+      childNodes = this.optionsData.map((item) => {
+        let o = document.createElement("option");
+        o.label = item.label;
+        o.value = item.value;
+        return o;
+      })
 
-    childNodes.forEach((n) => s.appendChild(n));
+    }
+
+    childNodes.forEach((n) => {
+      select_elem.appendChild(n);
+    });
+
+
+  }
+  protected firstUpdated(_changedProperties: PropertyValues): void {
+    this.createOptions();
   }
   handleSlotchange(e: Event) {
-    //
-    const s = this.shadowRoot.getElementById("#the-select");
-    const childNodes = (e.target as HTMLSlotElement).assignedNodes({flatten: true});
-
-    childNodes.forEach((n) => s.appendChild(n));
-
+    this.createOptions();
   }
 
   selectionChangeHandler(ev: Event) {
@@ -128,8 +153,7 @@ export class MultiSelect extends LitElement {
       return html`
 
         <div id="container">
-
-            <slot></slot>
+            <!-- <slot></slot> -->
             <details>
                 <summary>
                     <span class="open-icon">&#x2192;</span>

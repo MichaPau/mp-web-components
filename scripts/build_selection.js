@@ -54,7 +54,7 @@ let options = {
   outdir: outdir,
   color: true,
   // external: ['./src/utils/*'],
-  metafile: true,
+  metafile: false,
   chunkNames: 'chunks/[name]-[hash]',
   logLevel: "debug",
   plugins: []
@@ -62,6 +62,7 @@ let options = {
 
 if (values["log"]) {
   options["plugins"].push(metalogPlugin);
+  options["metafile"] = true;
 }
 
 let ctx = await esbuild.context(options);
