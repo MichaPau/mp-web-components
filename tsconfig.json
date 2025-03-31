@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    // Enable latest features
+    "lib": ["ESNext", "DOM", "dom.iterable"],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "downlevelIteration": true,
+    "importHelpers": false,
+    "outDir": "tsc-out",
+    "sourceMap": true,
+    "inlineSources": true,
+    "rootDir": "./",
+    "declaration": true,
+    "declarationMap": true,
+    "useDefineForClassFields": false,
+    "plugins": [{ "name": "ts-lit-plugin" }],
+
+
+
+
+  },
+  "include": ["src/**/*.ts"]
+
+}

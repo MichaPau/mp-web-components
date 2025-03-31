@@ -1,0 +1,27 @@
+{
+  "name": "webcomponents",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build-test": "esbuild index.ts --bundle --outfile=out.js",
+    "build-all": "bun ./scripts/build_all.js",
+    "build-s": "bun ./scripts/build_selection.js",
+    "start": "bun run build-s -- --servedir=www",
+    "watch": "bun run build-s -- --watch",
+    "server-start": "web-dev-server --open / --node-resolve"
+
+  },
+  "devDependencies": {
+    "@web/dev-server": "^0.4.6",
+    "esbuild": "^0.25.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@lit-labs/motion": "^1.0.8",
+    "lit": "^3.2.1",
+    "ts-lit-plugin": "^2.0.2",
+    "tslib": "^2.8.1"
+  }
+}
