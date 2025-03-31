@@ -144,10 +144,12 @@ export class MultiSelect extends LitElement {
 
   }
 
-  getSelection() {
+  getSelection(): Array<{label: string, value: string}> {
     const select = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
-    const values = Array.from(select.selectedOptions).map(o => o.value);
-    values
+    const values = Array.from(select.selectedOptions).map(o => (
+      { "label": o.label, "value": o.value }
+    ));
+    return values;
 
   }
   render() {
