@@ -107,6 +107,7 @@ export class MultiSelect extends LitElement {
       let elem = document.createElement("div");
       elem.innerHTML = o.value;
       elem.classList.add("tag");
+      elem.setAttribute("part", "tag");
 
       elem.addEventListener("click", this.tagElemClickListener);
 
@@ -152,7 +153,7 @@ export class MultiSelect extends LitElement {
   render() {
       return html`
 
-        <div id="container">
+        <div part="main-container" id="container">
             <!-- <slot></slot> -->
             <details>
                 <summary>
@@ -162,7 +163,7 @@ export class MultiSelect extends LitElement {
                         <input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput}/>
                     </div>
                 </summary>
-                <select id="the-select" @change=${this.selectionChangeHandler} multiple></select>
+                <select part="select" id="the-select" @change=${this.selectionChangeHandler} multiple></select>
             </details>
         </div>
     `;
