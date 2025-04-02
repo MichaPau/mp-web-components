@@ -7,30 +7,63 @@ export class MultiSelect extends LitElement {
       :host {
           display: inline-block;
           box-sizing: border-box;
+          --multi-select-header-row-height: 1.5rem;
+          --multi-select-font-size: var(--multi-select-header-row-height) * 0.8;
+          --multi-select-border-color: #aaa;
 
       }
       #container {
-          border: 1px solid black;
+          border: 1px solid var(--multi-select-border-color);
+          border-radius: 4px;
       }
 
       #input-container {
           display: inline-flex;
+          justify-content: space-between;
           gap: 0.5rem;
-          height: 2rem;
+          height: auto;
+          min-height: var(--multi-select-header-row-height);
+          width: 100%;
       }
       #tag-container {
           display: flex;
+          flex-wrap: wrap;
           gap: 0.25rem;
+
       }
       #the-select {
           width: 100%;
+          font-size: var(--multi-select-font-size);
+          border: none;
+      }
+      #search-input {
+          box-sizing: border-box;
+          align-self: flex-start;
+          height: var(--multi-select-header-row-height);
+          font-size: var(--multi-select-font-size);
+          margin: 0;
+          padding: 0;
       }
       .tag {
           box-sizing: border-box;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           border: 1px solid black;
-          padding: 0.25rem;
+          padding: calc(var(--multi-select-header-row-height) * 0.1);
           cursor: pointer;
-          height: 2rem;
+          height: var(--multi-select-header-row-height);
+          line-height: var(--multi-select-header-row-height);
+          //font-size: calc(var(--multi-select-header-row-height) - 0.5rem - 4px);
+          font-size: var(--multi-select-font-size);
+          align-content: center;
+          text-align: center;
+      }
+      details[open] {
+          padding-bottom: 0.25rem;
+      }
+      details[open] summary {
+        border-bottom: 1px solid #aaa;
       }
       summary {
           text-align: center;
@@ -42,6 +75,11 @@ export class MultiSelect extends LitElement {
       .open-icon {
           cursor: pointer;
           user-select: none;
+          height: var(--multi-select-header-row-height);
+          line-height: var(--multi-select-header-row-height);
+          align-self: flex-start;
+          align-content: center;
+          font-size: var(--multi-select-font-size);
       }
 
 
@@ -52,11 +90,8 @@ export class MultiSelect extends LitElement {
   @property({ attribute: false })
   optionsData: Array<{ label: string, value: string }> = [];
 
-  @state()
-  hasSlotOptions: boolean = false;
-
-  @state()
-  optionList: HTMLOptionsCollection;
+  @property({ type: Boolean })
+  searchEnabled = false;
 
   constructor() {
     super();
@@ -153,16 +188,21 @@ export class MultiSelect extends LitElement {
 
   }
   render() {
+    console.log("search enabled: ", this.searchEnabled);
       return html`
 
         <div part="main-container" id="container">
             <!-- <slot></slot> -->
-            <details>
+            <details >
                 <summary>
                     <span class="open-icon">&#x2192;</span>
                     <div id="input-container">
-                        <div id="tag-container"></div>
-                        <input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput}/>
+                        <div id="tag-container" part="tag-container"></div>
+                            ${this.searchEnabled ?
+                                html`<input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput}/>` :
+                                html``
+                            }
+                        <!-- <input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput}/> -->
                     </div>
                 </summary>
                 <select part="select" id="the-select" @change=${this.selectionChangeHandler} multiple></select>
