@@ -49,7 +49,6 @@ export class MultiSelect extends LitElement {
           display: flex;
           justify-content: center;
           align-items: center;
-          border: 1px solid black;
           padding: calc(var(--multi-select-header-row-height) * 0.1);
           cursor: pointer;
           height: var(--multi-select-header-row-height);
@@ -58,6 +57,11 @@ export class MultiSelect extends LitElement {
           font-size: var(--multi-select-font-size);
           align-content: center;
           text-align: center;
+          /* border: 1px solid black; */
+          background-color: white;
+          //filter: drop-shadow(0.2em 0.2em rgb(from black r g b / 50%));
+          //box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
       }
       details[open] {
           padding-bottom: 0.25rem;
@@ -180,6 +184,7 @@ export class MultiSelect extends LitElement {
   }
 
   getSelection(): Array<{label: string, value: string}> {
+
     const select = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
     const values = Array.from(select.selectedOptions).map(o => (
       { "label": o.label, "value": o.value }
@@ -188,7 +193,7 @@ export class MultiSelect extends LitElement {
 
   }
   render() {
-    console.log("search enabled: ", this.searchEnabled);
+
       return html`
 
         <div part="main-container" id="container">
