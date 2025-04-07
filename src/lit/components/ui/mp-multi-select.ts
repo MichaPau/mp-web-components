@@ -8,8 +8,10 @@ export class MultiSelect extends LitElement {
           display: inline-block;
           box-sizing: border-box;
           --multi-select-header-row-height: 1.5rem;
-          --multi-select-font-size: var(--multi-select-header-row-height) * 0.8;
+          --multi-select-font-size: calc(var(--multi-select-header-row-height) * 0.6);
           --multi-select-border-color: #aaa;
+
+          color-scheme: light dark;
 
       }
       #container {
@@ -19,6 +21,8 @@ export class MultiSelect extends LitElement {
 
       #input-container {
           display: inline-flex;
+          flex: 1;
+          min-width: 0;
           justify-content: space-between;
           gap: 0.5rem;
           height: auto;
@@ -28,7 +32,10 @@ export class MultiSelect extends LitElement {
       #tag-container {
           display: flex;
           flex-wrap: wrap;
+          align-items: center;
+          color:#999;
           gap: 0.25rem;
+          font-size: var(--multi-select-font-size);
 
       }
       #the-select {
@@ -37,6 +44,8 @@ export class MultiSelect extends LitElement {
           border: none;
       }
       #search-input {
+          flex: 1 1 auto;
+          min-width: 0;
           box-sizing: border-box;
           align-self: flex-start;
           height: var(--multi-select-header-row-height);
@@ -44,7 +53,11 @@ export class MultiSelect extends LitElement {
           margin: 0;
           padding: 0;
       }
+      option {
+          font-size: var(--multi-select-font-size);
+      }
       .tag {
+          color: initial;
           box-sizing: border-box;
           display: flex;
           justify-content: center;
@@ -53,15 +66,11 @@ export class MultiSelect extends LitElement {
           cursor: pointer;
           height: var(--multi-select-header-row-height);
           line-height: var(--multi-select-header-row-height);
-          //font-size: calc(var(--multi-select-header-row-height) - 0.5rem - 4px);
           font-size: var(--multi-select-font-size);
           align-content: center;
           text-align: center;
-          /* border: 1px solid black; */
-          background-color: white;
-          //filter: drop-shadow(0.2em 0.2em rgb(from black r g b / 50%));
-          //box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-          box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+          background-color: light-dark(#b1b1b1, #4e4e4e);
+          border: 1px solid light-dark(rgb(0, 0, 0),rgb(57, 57, 57));
       }
       details[open] {
           padding-bottom: 0.25rem;
@@ -87,25 +96,65 @@ export class MultiSelect extends LitElement {
       }
 
 
-       `;
-  @property({type: String})
-  name = 'default name';
+    `;
+
+  static override shadowRootOptions = {
+      ...LitElement.shadowRootOptions,
+      delegatesFocus: true,
+  };
+
+  public static formAssociated = true;
+  private _internals: ElementInternals;
 
   @property({ attribute: false })
   optionsData: Array<{ label: string, value: string }> = [];
 
-  @property({ type: Boolean })
+  @property({ type: Boolean, reflect: true })
   searchEnabled = false;
+
+  @property({ type: Boolean, reflect: true })
+  disabled = false;
+
+  @property({ type: Boolean, reflect: true })
+  required = false;
+
+  @property({ type: Boolean, reflect: true })
+  notCloseOnFocusOut = false;
+
+  @property()
+  name = "mp-multi-select";
+
+  @property({ attribute: false })
+  values: Array<{ label: string, value: string }> = [];
+
+
+
 
   constructor() {
     super();
-    //this.optionList = new HTMLOptionsCollection();
+    this._internals = this.attachInternals();
   }
+
+  // public checkValidity(): boolean {
+  //   return this._internals.checkValidity();
+  // }
+
+  // public reportValidity(): boolean {
+  //   return this._internals.reportValidity();
+  // }
+
+  // public get validity(): ValidityState {
+  //   return this._internals.validity;
+  // }
+
+  // public get validationMessage(): string {
+  //   return this._internals.validationMessage;
+  // }
 
   createOptions() {
     const select_elem = this.shadowRoot.getElementById("the-select");
     const slot = this.shadowRoot.querySelector('slot');
-    //let childNodes = slot.assignedElements({flatten: true});
+
     let childNodes = Array.from(this.children);
     childNodes = childNodes.filter((n) => n.nodeName === "OPTION");
 
@@ -117,7 +166,6 @@ export class MultiSelect extends LitElement {
         o.value = item.value;
         return o;
       })
-
     }
 
     childNodes.forEach((n) => {
@@ -126,49 +174,107 @@ export class MultiSelect extends LitElement {
 
 
   }
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    this.manageInternals();
+
+  }
+
+  manageInternals() {
+    if (this.required && this.values.length === 0) {
+      this._internals.setFormValue(null);
+      this._internals.setValidity({ valueMissing: true }, "required selection");
+    } else {
+      let fD = new FormData();
+      this.values.forEach(v => fD.append(this.name, v.value));
+      this._internals.setFormValue(fD);
+      this._internals.setValidity({});
+    }
+  }
+
   protected firstUpdated(_changedProperties: PropertyValues): void {
+    // const the_select = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
+    // this._internals.setValidity(the_select.validity, the_select.validationMessage, the_select);
     this.createOptions();
+
+    if (!this.notCloseOnFocusOut)  this.addEventListener("focusout", this.closeDetail);
+
+
   }
   handleSlotchange(e: Event) {
     this.createOptions();
   }
 
+  closeDetail(ev: Event) {
+    console.log("focus out: close detail: ", this.id);
+    const detail: HTMLDetailsElement = this.shadowRoot.getElementById("the-detail") as HTMLDetailsElement;
+    setTimeout((_) => detail.open = false, 25);
+    //detail.open = false;
+  }
   selectionChangeHandler(ev: Event) {
     const select = ev.target as HTMLSelectElement;
     const container = this.shadowRoot.getElementById("tag-container");
     for (const child of container.children) {
       child.removeEventListener("click", this.tagElemClickListener);
+      child.removeEventListener("keydown", this.tagElemKeydownListener);
     }
     container.replaceChildren();
+
+    this.values = [];
     //const search_input = this.shadowRoot.getElementById("search-input");
     const values = Array.from(select.selectedOptions).map((o) => {
 
+      this.values.push({ "label": o.label, "value": o.value });
       let elem = document.createElement("div");
-      elem.innerHTML = o.value;
+      elem.innerHTML = o.label;
       elem.classList.add("tag");
       elem.setAttribute("part", "tag");
+      elem.setAttribute("value", o.value);
+      elem.setAttribute("tabindex", "0");
 
       elem.addEventListener("click", this.tagElemClickListener);
+      elem.addEventListener("keydown", this.tagElemKeydownListener);
 
       let r = container.appendChild(elem);
 
 
     });
+    this.manageInternals();
 
   }
+  tagElemKeydownListener = (ev: KeyboardEvent) => {
+    ev.stopPropagation();
+    //ev.preventDefault();
+    if (ev.key === "Enter") {
+      const tag = ev.target as HTMLElement;
+      this.removeTag(tag);
+    }
+  }
   tagElemClickListener = (ev:Event) =>  {
+
     ev.stopPropagation();
     ev.preventDefault();
-    const myself = ev.target as HTMLElement;
-    const t = myself.innerHTML;
-    myself.parentNode.removeChild(myself);
+    const tag = ev.target as HTMLElement;
+    this.removeTag(tag);
+
+  }
+
+  removeTag(tag: HTMLElement) {
+    const t = tag.innerHTML;
+    const parent = tag.parentNode;
+    parent.removeChild(tag);
 
     const select: HTMLSelectElement = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
 
     let u = Array.from(select.selectedOptions).find((item) => item.value === t);
     u.selected = false;
-  }
 
+    this.values = Array.from(select.selectedOptions).map((item) => { return { "label": item.label, "value": item.value } });
+
+    this.manageInternals();
+    if (parent.children.length === 0) (parent as HTMLElement).innerHTML = "no selection";
+  }
   onSearchInput(ev: InputEvent) {
     const search = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
     const t = ev.target as HTMLInputElement;
@@ -185,11 +291,23 @@ export class MultiSelect extends LitElement {
 
   getSelection(): Array<{label: string, value: string}> {
 
-    const select = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
-    const values = Array.from(select.selectedOptions).map(o => (
-      { "label": o.label, "value": o.value }
-    ));
-    return values;
+    return this.values;
+    // const select = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
+    // const values = Array.from(select.selectedOptions).map(o => (
+    //   { "label": o.label, "value": o.value }
+    // ));
+    // return values;
+
+  }
+
+  detailsToggle(ev: Event) {
+    console.log("details toggle: ", this.id);
+    const detailsElem = this.shadowRoot.getElementById("the-detail") as HTMLDetailsElement;
+    detailsElem.open = !detailsElem.open;
+  }
+  detailsClick(ev:Event) {
+    console.log(ev.target);
+    ev.preventDefault();
 
   }
   render() {
@@ -198,21 +316,23 @@ export class MultiSelect extends LitElement {
 
         <div part="main-container" id="container">
             <!-- <slot></slot> -->
-            <details >
+            <details id="the-detail">
                 <summary>
                     <span class="open-icon">&#x2192;</span>
                     <div id="input-container">
-                        <div id="tag-container" part="tag-container"></div>
+                        <div id="tag-container" part="tag-container">no selection</div>
                             ${this.searchEnabled ?
-                                html`<input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput}/>` :
+                                html`<input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput} ?disabled=${this.disabled} />` :
                                 html``
                             }
                         <!-- <input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput}/> -->
                     </div>
                 </summary>
-                <select part="select" id="the-select" @change=${this.selectionChangeHandler} multiple></select>
+                <select part="select" id="the-select" @change=${this.selectionChangeHandler} multiple ?disabled=${this.disabled} required></select>
             </details>
         </div>
     `;
   }
 }
+
+//<details id="the-detail" @click=${this.detailsClick} @mousedown=${this.detailsToggle}>
