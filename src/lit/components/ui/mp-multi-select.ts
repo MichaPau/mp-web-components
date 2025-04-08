@@ -106,8 +106,13 @@ export class MultiSelect extends LitElement {
   public static formAssociated = true;
   private _internals: ElementInternals;
 
+  private validationMessage: string;
+
   @property({ attribute: false })
   optionsData: Array<{ label: string, value: string }> = [];
+
+  @property({ type: Number, reflect: true })
+  size = 0;
 
   @property({ type: Boolean, reflect: true })
   searchEnabled = false;
@@ -177,14 +182,14 @@ export class MultiSelect extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
-    this.manageInternals();
+
 
   }
 
   manageInternals() {
     if (this.required && this.values.length === 0) {
       this._internals.setFormValue(null);
-      this._internals.setValidity({ valueMissing: true }, "required selection");
+      this._internals.setValidity({ valueMissing: true }, this.validationMessage);
     } else {
       let fD = new FormData();
       this.values.forEach(v => fD.append(this.name, v.value));
@@ -194,8 +199,10 @@ export class MultiSelect extends LitElement {
   }
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
-    // const the_select = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
+    const the_select = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
+    this.validationMessage = the_select.validationMessage;
     // this._internals.setValidity(the_select.validity, the_select.validationMessage, the_select);
+    this.manageInternals();
     this.createOptions();
 
     if (!this.notCloseOnFocusOut)  this.addEventListener("focusout", this.closeDetail);
@@ -328,7 +335,7 @@ export class MultiSelect extends LitElement {
                         <!-- <input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput}/> -->
                     </div>
                 </summary>
-                <select part="select" id="the-select" @change=${this.selectionChangeHandler} multiple ?disabled=${this.disabled} required></select>
+                <select size=${this.size} part="select" id="the-select" @change=${this.selectionChangeHandler} multiple ?disabled=${this.disabled} required></select>
             </details>
         </div>
     `;
