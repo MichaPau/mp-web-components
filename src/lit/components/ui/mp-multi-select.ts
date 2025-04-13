@@ -342,4 +342,9 @@ export class MultiSelect extends LitElement {
   }
 }
 
+declare global {
+  interface HTMLElementTagNameMap {
+    'mp-multi-select': MultiSelect;
+  }
+}
 //<details id="the-detail" @click=${this.detailsClick} @mousedown=${this.detailsToggle}>
