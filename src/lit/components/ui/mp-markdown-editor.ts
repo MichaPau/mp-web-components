@@ -4,52 +4,10 @@ import { unsafeCSS } from 'lit';
 import { adoptStyles } from 'lit';
 import { marked } from 'marked';
 
-//import { githubMdStyles } from '../../styles/markdown-styles';
 
-
-export function setMdStyle(style: CSSResult) {
-  mdStyle = style;
-
-
-}
-export let mdStyle: CSSResult | undefined = undefined;
+//https://github.com/WICG/webcomponents/issues/909
 //https://github.com/lit/lit/issues/1977
-const styles_glob = [
-  //githubMdStyles,
-  css`
-    mp-markdown-editor {
-        box-sizing: border-box;
-        display: block;
-        width: 100%;
-        height: 100%;
 
-        h3 {
-            color: green;
-        }
-
-        .editor-container {
-            border: 1px solid black;
-            display: flex;
-            gap: 0.5rem;
-
-        }
-
-        .md-editor {
-            flex: 1 1 50%;
-            min-height: 5rem;
-
-        }
-        .md-render {
-            border: 1px solid khaki;
-            flex: 1 1 50%;
-            padding: 2px;
-            font-size: 0.75rem;
-        }
-
-
-    }
-
-    `.styleSheet];
 @customElement('mp-markdown-editor')
 export class MarkdownEditor extends LitElement {
 
@@ -124,7 +82,7 @@ export class MarkdownEditor extends LitElement {
 
 
   static override finalizeStyles(styles: CSSResultGroup) {
-    console.log("MarkdownEditor::finalizeStyles");
+
     const style_elem: HTMLLinkElement = document.head.querySelector('link[data-style-name="mdstyle"]');
 
     if( style_elem) {
@@ -140,21 +98,7 @@ export class MarkdownEditor extends LitElement {
     super();
     console.log("constructor:", this.id);
   }
-  // protected createRenderRoot() {
 
-
-  //   const rootNode = this.getRootNode() as ShadowRoot | Document;
-  //   console.log("this root:", rootNode);
-  //   for(const sheet of styles) {
-  //     if(!rootNode.adoptedStyleSheets.includes(sheet)) {
-  //       rootNode.adoptedStyleSheets.push(sheet)
-  //     }
-  //   }
-  //   if (mdStyle !== undefined && !rootNode.adoptedStyleSheets.includes(mdStyle))  {
-  //     rootNode.adoptedStyleSheets.push(mdStyle);
-  //   }
-  //     return this;
-  // }
 
   connectedCallback(): void {
     super.connectedCallback();
@@ -199,8 +143,6 @@ export class MarkdownEditor extends LitElement {
   }
 
   check(_ev:Event) {
-    // const editor = this.querySelector(".md-editor") as HTMLTextAreaElement;
-    // const render = this.querySelector(".md-render") as HTMLElement;
 
     console.log("editor:", this.editor_elem.value);
     console.log("render:", this.render_elem.innerHTML);
