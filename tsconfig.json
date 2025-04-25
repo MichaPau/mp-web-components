@@ -20,10 +20,6 @@
     "declarationMap": true,
     "useDefineForClassFields": false,
     "plugins": [{ "name": "ts-lit-plugin" }],
-
-
-
-
   },
   "include": ["src/**/*.ts"]
 

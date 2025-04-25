@@ -24,3 +24,8 @@ export class TestComp extends LitElement {
     `;
   }
 }
+declare global {
+  interface HTMLElementTagNameMap {
+    'test-comp': TestComp;
+  }
+}
