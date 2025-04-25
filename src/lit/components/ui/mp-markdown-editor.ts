@@ -1,20 +1,40 @@
 import { CSSResult, CSSResultArray, CSSResultGroup, CSSResultOrNative, LitElement, PropertyValues, css, html,  } from 'lit';
+import {styleMap} from 'lit/directives/style-map.js';
 import { customElement, property, state, query } from 'lit/decorators.js';
 import { unsafeCSS } from 'lit';
 import { adoptStyles } from 'lit';
-import { marked } from 'marked';
+import { micromark } from 'micromark';
+import { fromMarkdown, CompileContext } from 'mdast-util-from-markdown';
+
+import { defaultStyles } from '../../styles/mp-default-styles.js';
+import './mp-toggle-button.js';
+import { ToggleButton } from './mp-toggle-button.js';
 
 
 //https://github.com/WICG/webcomponents/issues/909
 //https://github.com/lit/lit/issues/1977
 
+/**
+ * @summary MarkdownEditor uses micromark to render the markdown
+ *
+ * @csspart edit-element - the textarea
+ * @csspart render-element - the render container
+ * @csspart button-edit - edit toggle button
+ * @csspart button-render - render toggle button
+ * @csspart button-fullscreen - fullscreen button
+ **/
 @customElement('mp-markdown-editor')
 export class MarkdownEditor extends LitElement {
+
+  static override shadowRootOptions = {
+      ...LitElement.shadowRootOptions,
+      delegatesFocus: true,
+    };
 
   @property({type: String, reflect: true})
   test = "/styles/markdown-styles.css";
 
-  @property({type: String, reflect: true})
+  @property({type: String, reflect: false})
   value = "";
 
   @property({type: Number, reflect: true })
@@ -25,6 +45,9 @@ export class MarkdownEditor extends LitElement {
 
   @property({ type: Number, reflect: true })
   id;
+
+  @property({ type: String, attribute: "justify-buttons", reflect: true })
+  justifyButtons: "flex-start"|"flex-end"|"center"|"space-between"|"space-around"|"space-evenly" = "flex-start";
 
   @state()
   edit_mode = true;
@@ -38,44 +61,68 @@ export class MarkdownEditor extends LitElement {
   @query(".editor-container")
   editor_container: HTMLElement;
 
+  @query("#toggle_btn_editor")
+  toggl_btn_editor: ToggleButton;
+
+  @query("#toggle_btn_render")
+  toggl_btn_render: ToggleButton;
+
   private timeout: ReturnType<typeof setTimeout>;
 
-  static styles = [css`
+  static styles = [
+    defaultStyles,
+    css`
     :host {
+
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
         width: 100%;
+        gap: 0.25rem;
 
-        border: 1px solid red;
+        /* border: 1px solid red; */
 
-        h3 {
-            color: green;
+
+        * {
+            box-sizing: border-box;
         }
-
         .editor-container {
+            order: 2;
             border: 1px solid black;
+            padding: 2px;
             display: flex;
             gap: 0.5rem;
-            height: 100%;
+            height: auto;
+            resize: vertical;
+            overflow: hidden;
         }
-
+        .button-container {
+            order: 1;
+            display: flex;
+            gap: 0.25rem;
+        }
         .md-editor {
             flex: 1 1 50%;
-            min-height: 5rem;
+            white-space: pre-wrap;
             height: 100%;
+            max-height: 100%;
+            resize: none;
+            overflow-y: auto;
+
 
         }
+
         .md-render {
-            border: 1px solid khaki;
             flex: 1 1 50%;
             padding: 2px;
             font-size: 0.75rem;
-            min-height: 5rem;
+            /* min-height: 5rem; */
+            max-height: 100%;
             height: 100%;
+            overflow-y: auto;
+            border-color: ButtonBorder;
+            background-color: var(--mp-panel-area-color);
         }
-
-
     }
 
     `];
@@ -113,13 +160,19 @@ export class MarkdownEditor extends LitElement {
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
     if (this.value !== "") {
+      this.editor_elem.textContent = this.value;
       this.render_md();
     }
+
+    this.toggl_btn_render.toggled = true;
+    this.toggl_btn_editor.toggled = true;
   }
 
   fullscreenChangeHandler= (ev:Event) => {
     if(!document.fullscreenElement) {
-      this.changeMode();
+      //this.changeMode();
+      this.toggleEditor(null);
+      this.toggleRender(null);
     }
   }
   inputChanged = (ev: Event) => {
@@ -135,52 +188,86 @@ export class MarkdownEditor extends LitElement {
 
   private render_md = async () =>  {
 
-      this.value = this.editor_elem.value
-      const md = await marked(this.value);
-      this.render_elem.innerHTML = md;
+
+    //const md = this.editor_elem.textContent;
+    const md = this.editor_elem.value;
+
+    const html = micromark(md);
+
+    // const tree = fromMarkdown(md);
+    // console.log(tree);
+
+    //console.log(html);
+
+    this.render_elem.innerHTML = html;
+
+    //this.value = this.editor_elem.value
+
+    // this.value = this.editor_elem.textContent;
+    //   const md = await marked(this.value);
+    //   this.render_elem.innerHTML = md;
 
 
   }
 
   check(_ev:Event) {
 
-    console.log("editor:", this.editor_elem.value);
-    console.log("render:", this.render_elem.innerHTML);
+    // console.log("editor:", this.editor_elem.value);
+    // console.log("render:", this.render_elem.innerHTML);
   }
 
-  toggleMode(_ev:Event) {
-    this.edit_mode = !this.edit_mode;
-    this.changeMode();
-
-  }
-
-  changeMode() {
-    if(this.edit_mode) {
-      this.editor_elem.style.display = "block";
-      this.render_elem.style.display = "none";
-    } else {
+  toggleEditor(ev:Event | undefined) {
+    if (this.toggl_btn_editor.toggled) this.editor_elem.style.display = "block";
+    else {
       this.editor_elem.style.display = "none";
-      this.render_elem.style.display = "block";
+      if (this.render_elem.style.display === "none") {
+        this.render_elem.style.display = "block";
+        this.toggl_btn_render.toggled = true;
+      }
+    };
+  }
+
+  toggleRender(ev:Event | undefined) {
+    if (this.toggl_btn_render.toggled) this.render_elem.style.display = "block";
+    else {
+      this.render_elem.style.display = "none";
+      if (this.editor_elem.style.display === "none") {
+        this.editor_elem.style.display = "block";
+        this.toggl_btn_editor.toggled = true;
+
+      }
     }
   }
+
   fullscreen() {
     this.editor_elem.style.display = "block";
     this.render_elem.style.display = "block";
-    this.editor_container.requestFullscreen();
+    this.editor_container.requestFullscreen({ navigationUI: "show" });
   }
+
+  textOnScroll(source: HTMLElement, target: HTMLElement) {
+
+  }
+
+  testHandler(ev:Event) {
+
+  }
+
+
   render() {
+    const buttonStyle = { justifyContent: this.justifyButtons};
       return html`
-          <div>
-              <input type="button" value="Check" @click=${this.check}/>
-              <input type="button" value="Toggle" @click=${this.toggleMode}/>
-              <input type="button" value="Fullscreen" @click=${this.fullscreen}/>
+          <div part="editor-container" class="editor-container">
+               <textarea part="edit-element"  class="md-editor"
+                   @change=${this.liverender ? this.inputChanged : null}
+                   @keydown=${this.liverender ? this.keyUp : null}
+              >${this.value}</textarea>
+            <div part="render-element" class="md-render markdown-body" ></div>
           </div>
-          <div class="editor-container">
-            <textarea class="md-editor"
-                @change=${this.liverender ? this.inputChanged : null}
-                @keydown=${this.liverender ? this.keyUp : null}
-            >${this.value}</textarea>
-            <div class="md-render markdown-body"></div>
+          <div class="button-container" style=${styleMap(buttonStyle)}>
+              <mp-toggle-button part="button-edit" id="toggle_btn_editor" @click=${this.toggleEditor} toggled>🖊️</mp-toggle-button>
+              <mp-toggle-button part="button-render" id="toggle_btn_render" @click=${this.toggleRender} toggled>MD</mp-toggle-button>
+              <input part="button-fullscreen" type="button" value="[ ]" @click=${this.fullscreen}/>
           </div>
 
 
@@ -188,6 +275,16 @@ export class MarkdownEditor extends LitElement {
   }
 }
 
+//<button @click=${this.testHandler}>Test</button>
+// <textarea  class="md-editor"
+//     @change=${this.liverender ? this.inputChanged : null}
+//     @keydown=${this.liverender ? this.keyUp : null}
+//>${this.value}</textarea>
+
+// <div contenteditable="plaintext-only" class="md-editor"
+//     @change=${this.liverender ? this.inputChanged : null}
+//     @keydown=${this.liverender ? this.keyUp : null}
+// ></div>
 declare global {
   interface HTMLElementTagNameMap {
     'mp-markdown-editor': MarkdownEditor;
