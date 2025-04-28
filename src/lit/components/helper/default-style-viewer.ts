@@ -13,6 +13,7 @@ export class DefaultStyleViewer extends LitElement {
           width: 100%;
           height: 100%;
           padding: 0.5rem;
+
       }
       #main-container {
           display: flex;
@@ -20,11 +21,26 @@ export class DefaultStyleViewer extends LitElement {
           gap: 0.5rem;
           height: 100%;
       }
+      #action-container {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.25rem;
+          height: 1.5rem;
+          max-height: 3rem;
+
+      }
       #viewer {
           border: 1px solid black;
           width: 100%;
           height: 100%;
-      }`;
+      }
+      #value_select {
+          position: relative;
+          margin-top: -3px;
+          /* z-index: 99; */
+          width: 200px;
+      }
+      `;
 
   @query("#viewer")
   viewer_elem: HTMLTextAreaElement;
@@ -34,6 +50,9 @@ export class DefaultStyleViewer extends LitElement {
 
   @query("#value_select")
   value_filter: MultiSelect;
+
+  @query("#key_search_input")
+  search_key_input: HTMLInputElement;
 
   @property({type: String, attribute: 'local-name'})
   localName = '';
@@ -50,12 +69,15 @@ export class DefaultStyleViewer extends LitElement {
       this.get_styles();
     }
 
+    //const elem = this.shadowRoot.querySelector("mp-multi-select") as HTMLElement;
+
 
   }
 
   get_styles() {
     this.styleMap = new Map();
     const elem = document.createElement(this.localName);
+    // elem.innerHTML = "abc";
     document.body.appendChild(elem);
 
     try {
@@ -76,7 +98,7 @@ export class DefaultStyleViewer extends LitElement {
     } catch(e) {
       this.viewer_elem.value = `Error with element_name: ${this.localName} \n ${e}`;
     } finally {
-      document.body.removeChild(elem);
+      //document.body.removeChild(elem);
     }
 
 
@@ -99,6 +121,15 @@ export class DefaultStyleViewer extends LitElement {
     this.localName = this.name_input.value;
     this.get_styles();
   }
+  search_key_change(ev:Event) {
+    const searchString = this.search_key_input.value;
+    console.log("search for:", searchString);
+    const iter = this.styleMap.entries().filter(([key, value]) => {
+      return key.toLowerCase().includes(searchString.toLowerCase());
+    });
+    this.print_result(iter);
+
+  }
   render() {
       return html`
         <div id="main-container">
@@ -106,7 +137,13 @@ export class DefaultStyleViewer extends LitElement {
                 <label for="element_name__input">Element name:</label>
                 <input id="element_name_input" type="text"/>
                 <button @click=${this.update_with_name}>Update</button>
-                <mp-multi-select id="value_select"></mp-multi-select>
+                <label for="key_search_input">Search key like:</label>
+                <input type="text" id="key_search_input" @input=${this.search_key_change}/>
+                <mp-multi-select id="value_select" searchEnabled size="7"></mp-multi-select>
+                <select>
+                    <option>one two three</option>
+                    <option>un deux trois</option>
+                </select>
             </div>
             <textarea id="viewer" placeholder="no element provided"></textarea>
         </div>

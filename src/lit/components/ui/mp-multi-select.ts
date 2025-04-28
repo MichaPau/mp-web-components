@@ -8,15 +8,26 @@ export class MultiSelect extends LitElement {
           display: inline-block;
           box-sizing: border-box;
           --multi-select-header-row-height: 1.5rem;
-          --multi-select-font-size: calc(var(--multi-select-header-row-height) * 0.6);
-          --multi-select-border-color: #aaa;
-
-          color-scheme: light dark;
+          /* --multi-select-font-size: calc(var(--multi-select-header-row-height) * 0.6); */
+          --multi-select-font-size: 1rem;
+          //--multi-select-border-color: #aaa;
+          --multi-select-border-color: ButtonBorder;
+          --multi-select-border: 1px solid ButtonBorder;
+          max-height: 100%;
+          /* color-scheme: light dark; */
 
       }
+      * {
+          box-sizing: border-box;
+      }
       #container {
-          border: 1px solid var(--multi-select-border-color);
-          border-radius: 4px;
+          /* border: 1px solid var(--multi-select-border-color);
+          border-radius: 4px; */
+          appearance: textfield;
+          border: var(--multi-select-border);
+          background-color: Field;
+          /* max-height: var(--multi-select-header-row-height);
+          overflow: visible; */
       }
 
       #input-container {
@@ -30,21 +41,26 @@ export class MultiSelect extends LitElement {
           width: 100%;
       }
       #tag-container {
+          flex: 1 1 20ch;
           display: flex;
           flex-wrap: wrap;
           align-items: center;
           color:#999;
           gap: 0.25rem;
           font-size: var(--multi-select-font-size);
+          text-wrap: nowrap;
+          overflow: hidden;
 
       }
       #the-select {
+          position: absolute;
           width: 100%;
           font-size: var(--multi-select-font-size);
-          border: none;
+          border: 1px solid black;
+          z-index: 99;
       }
       #search-input {
-          flex: 1 1 auto;
+          flex: 1 1 20ch;
           min-width: 0;
           box-sizing: border-box;
           align-self: flex-start;
@@ -52,6 +68,8 @@ export class MultiSelect extends LitElement {
           font-size: var(--multi-select-font-size);
           margin: 0;
           padding: 0;
+
+
       }
       option {
           font-size: var(--multi-select-font-size);
@@ -72,27 +90,41 @@ export class MultiSelect extends LitElement {
           background-color: light-dark(#b1b1b1, #4e4e4e);
           border: 1px solid light-dark(rgb(0, 0, 0),rgb(57, 57, 57));
       }
-      details[open] {
-          padding-bottom: 0.25rem;
+      details {
+          position: relative;
       }
-      details[open] summary {
-        border-bottom: 1px solid #aaa;
+      details[open] {
+          /* padding-bottom: 0.25rem; */
+      }
+      details[open] summary > .open-icon {
+        /* border-bottom: 1px solid #aaa; */
+        transform: rotate(90deg);
+
       }
       summary {
           text-align: center;
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          padding: 0.25rem;
+          /* padding: 0.25rem; */
+          padding: 2px;
+
+      }
+
+      #icon  {
+          display: block;
       }
       .open-icon {
           cursor: pointer;
           user-select: none;
-          height: var(--multi-select-header-row-height);
-          line-height: var(--multi-select-header-row-height);
-          align-self: flex-start;
-          align-content: center;
-          font-size: var(--multi-select-font-size);
+          height: 1.2rem;
+          width: 1.2rem;
+          /* align-self: flex-start; */
+          /* align-content: center; */
+          /* font-size: var(--multi-select-font-size); */
+          /* transform: rotate(90deg); */
+          transition: all 0.15s;
+          transition-timing-function: ease-in;
       }
 
 
@@ -177,15 +209,31 @@ export class MultiSelect extends LitElement {
       select_elem.appendChild(n);
     });
 
-
   }
 
   connectedCallback(): void {
     super.connectedCallback();
+    this.addEventListener("keydown", this.onKeyDown);
 
-
+    const s = window.getComputedStyle(this);
+    if (s.width === "0px" || s.width === "") {
+      this.searchEnabled ? this.style.width = "40ch" : this.style.width = "20ch";
+    }
   }
 
+  disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this.removeEventListener("keydown", this.onKeyDown);
+  }
+  onKeyDown(ev:KeyboardEvent) {
+    if (ev.key === "Escape") {
+      const detailsElem = this.shadowRoot.getElementById("the-detail") as HTMLDetailsElement;
+
+      if(detailsElem.open) {
+        detailsElem.open = false;
+      }
+    }
+  }
   manageInternals() {
     if (this.required && this.values.length === 0) {
       this._internals.setFormValue(null);
@@ -207,6 +255,8 @@ export class MultiSelect extends LitElement {
 
     if (!this.notCloseOnFocusOut)  this.addEventListener("focusout", this.closeDetail);
 
+    // const elem = this.parentElement.querySelector("mp-multi-select");
+    // console.log("width: ", elem.style.position);
 
   }
   handleSlotchange(e: Event) {
@@ -214,7 +264,7 @@ export class MultiSelect extends LitElement {
   }
 
   closeDetail(ev: Event) {
-    console.log("focus out: close detail: ", this.id);
+    //console.log("focus out: close detail: ", this.id);
     const detail: HTMLDetailsElement = this.shadowRoot.getElementById("the-detail") as HTMLDetailsElement;
     setTimeout((_) => detail.open = false, 25);
     //detail.open = false;
@@ -233,9 +283,9 @@ export class MultiSelect extends LitElement {
     const values = Array.from(select.selectedOptions).map((o) => {
 
       this.values.push({ "label": o.label, "value": o.value });
-      let elem = document.createElement("div");
+      let elem = document.createElement("button");
       elem.innerHTML = o.label;
-      elem.classList.add("tag");
+      // elem.classList.add("tag");
       elem.setAttribute("part", "tag");
       elem.setAttribute("value", o.value);
       elem.setAttribute("tabindex", "0");
@@ -297,25 +347,24 @@ export class MultiSelect extends LitElement {
   }
 
   getSelection(): Array<{label: string, value: string}> {
-
     return this.values;
-    // const select = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
-    // const values = Array.from(select.selectedOptions).map(o => (
-    //   { "label": o.label, "value": o.value }
-    // ));
-    // return values;
-
   }
 
   detailsToggle(ev: Event) {
-    console.log("details toggle: ", this.id);
+    //console.log("details toggle: ", this.id);
     const detailsElem = this.shadowRoot.getElementById("the-detail") as HTMLDetailsElement;
     detailsElem.open = !detailsElem.open;
   }
   detailsClick(ev:Event) {
-    console.log(ev.target);
     ev.preventDefault();
 
+  }
+  on_details_toggle(ev:ToggleEvent) {
+    const detailsElem = this.shadowRoot.getElementById("the-detail") as HTMLDetailsElement;
+
+    if(detailsElem.open) {
+      this.shadowRoot.getElementById("the-select").focus();
+    }
   }
   render() {
 
@@ -323,16 +372,18 @@ export class MultiSelect extends LitElement {
 
         <div part="main-container" id="container">
             <!-- <slot></slot> -->
-            <details id="the-detail">
+            <details id="the-detail" @toggle=${this.on_details_toggle}>
                 <summary>
-                    <span class="open-icon">&#x2192;</span>
+                    <!-- <span class="open-icon">&#x2192;</span> -->
+                    <div class="open-icon" part="icon-container">
+                        <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16"> <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1z"/> </svg>
+                    </div>
                     <div id="input-container">
                         <div id="tag-container" part="tag-container">no selection</div>
                             ${this.searchEnabled ?
                                 html`<input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput} ?disabled=${this.disabled} />` :
                                 html``
                             }
-                        <!-- <input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput}/> -->
                     </div>
                 </summary>
                 <select size=${this.size} part="select" id="the-select" @change=${this.selectionChangeHandler} multiple ?disabled=${this.disabled} required></select>

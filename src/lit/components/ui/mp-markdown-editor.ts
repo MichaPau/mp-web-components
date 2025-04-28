@@ -80,12 +80,10 @@ export class MarkdownEditor extends LitElement {
         width: 100%;
         gap: 0.25rem;
 
-        /* border: 1px solid red; */
-
-
         * {
             box-sizing: border-box;
         }
+
         .editor-container {
             order: 2;
             border: 1px solid black;
@@ -108,7 +106,6 @@ export class MarkdownEditor extends LitElement {
             max-height: 100%;
             resize: none;
             overflow-y: auto;
-
 
         }
 
