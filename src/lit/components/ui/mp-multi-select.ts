@@ -1,31 +1,42 @@
 import { LitElement, PropertyValues, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { defaultStyleTokens } from '../../styles/mp-default-style-tokens.js';
 
 @customElement('mp-multi-select')
 export class MultiSelect extends LitElement {
-  static styles = css`
+  static styles = [
+    defaultStyleTokens,
+    css`
       :host {
+          font-size: var(--__mp-font-size);
           display: inline-block;
           box-sizing: border-box;
-          --multi-select-header-row-height: 1.5rem;
+          --__mp-multi-select-header-row-height: var(--mp-multi-select-header-row-height, var(--__mp-font-size)*1.5);
           /* --multi-select-font-size: calc(var(--multi-select-header-row-height) * 0.6); */
-          --multi-select-font-size: 1rem;
-          //--multi-select-border-color: #aaa;
-          --multi-select-border-color: ButtonBorder;
-          --multi-select-border: 1px solid ButtonBorder;
+          /* --multi-select-font-size: 1rem; */
+          /* --multi-select-border-color: #aaa; */
+          /* --multi-select-border-color: ButtonBorder; */
+          /* --multi-select-border: 1px solid ButtonBorder; */
           max-height: 100%;
+
           /* color-scheme: light dark; */
 
       }
       * {
           box-sizing: border-box;
+          font-size: inherit;
+      }
+      button, input {
+          display: inline-block;
+          max-height: var(--__mp-multi-select-header-row-height);
+          margin: 0;
+          padding: 0;
       }
       #container {
           /* border: 1px solid var(--multi-select-border-color);
           border-radius: 4px; */
-          appearance: textfield;
-          border: var(--multi-select-border);
-          background-color: Field;
+          border: var(--__mp-border);
+          background-color: var(--__mp-field-bg-color);
           /* max-height: var(--multi-select-header-row-height);
           overflow: visible; */
       }
@@ -37,7 +48,7 @@ export class MultiSelect extends LitElement {
           justify-content: space-between;
           gap: 0.5rem;
           height: auto;
-          min-height: var(--multi-select-header-row-height);
+          min-height: var(--__mp-multi-select-header-row-height);
           width: 100%;
       }
       #tag-container {
@@ -47,16 +58,18 @@ export class MultiSelect extends LitElement {
           align-items: center;
           color:#999;
           gap: 0.25rem;
-          font-size: var(--multi-select-font-size);
+          /* font-size: var(--mp-font-size); */
           text-wrap: nowrap;
           overflow: hidden;
 
       }
       #the-select {
+          box-sizing: border-box;
           position: absolute;
           width: 100%;
-          font-size: var(--multi-select-font-size);
-          border: 1px solid black;
+          /* font-size: var(--mp-font-size); */
+          border: var(--__mp-border);
+          /* right: var(--__mp-border-width); */
           z-index: 99;
       }
       #search-input {
@@ -64,17 +77,16 @@ export class MultiSelect extends LitElement {
           min-width: 0;
           box-sizing: border-box;
           align-self: flex-start;
-          height: var(--multi-select-header-row-height);
-          font-size: var(--multi-select-font-size);
-          margin: 0;
-          padding: 0;
+          height: var(--__mp-multi-select-header-row-height);
+          /* font-size: var(--mp-font-size); */
+
 
 
       }
       option {
-          font-size: var(--multi-select-font-size);
+          /* font-size: var(--mp-font-size); */
       }
-      .tag {
+      /* .tag {
           color: initial;
           box-sizing: border-box;
           display: flex;
@@ -89,13 +101,13 @@ export class MultiSelect extends LitElement {
           text-align: center;
           background-color: light-dark(#b1b1b1, #4e4e4e);
           border: 1px solid light-dark(rgb(0, 0, 0),rgb(57, 57, 57));
-      }
+      } */
       details {
           position: relative;
       }
-      details[open] {
-          /* padding-bottom: 0.25rem; */
-      }
+      /* details[open] {
+
+      } */
       details[open] summary > .open-icon {
         /* border-bottom: 1px solid #aaa; */
         transform: rotate(90deg);
@@ -117,8 +129,10 @@ export class MultiSelect extends LitElement {
       .open-icon {
           cursor: pointer;
           user-select: none;
-          height: 1.2rem;
-          width: 1.2rem;
+          /* height: 1.2rem;
+          width: 1.2rem; */
+          height: var(--__mp-font-size);
+          width: var(--__mp-font-size);
           /* align-self: flex-start; */
           /* align-content: center; */
           /* font-size: var(--multi-select-font-size); */
@@ -128,7 +142,7 @@ export class MultiSelect extends LitElement {
       }
 
 
-    `;
+    `];
 
   static override shadowRootOptions = {
       ...LitElement.shadowRootOptions,

@@ -6,7 +6,7 @@ import { adoptStyles } from 'lit';
 import { micromark } from 'micromark';
 import { fromMarkdown, CompileContext } from 'mdast-util-from-markdown';
 
-import { defaultStyles } from '../../styles/mp-default-styles.js';
+import { defaultStyleTokens } from '../../styles/mp-default-style-tokens.js';
 import './mp-toggle-button.js';
 import { ToggleButton } from './mp-toggle-button.js';
 
@@ -70,7 +70,7 @@ export class MarkdownEditor extends LitElement {
   private timeout: ReturnType<typeof setTimeout>;
 
   static styles = [
-    defaultStyles,
+    defaultStyleTokens,
     css`
     :host {
 
@@ -79,11 +79,15 @@ export class MarkdownEditor extends LitElement {
         flex-direction: column;
         width: 100%;
         gap: 0.25rem;
+        height: auto;
 
         * {
             box-sizing: border-box;
         }
 
+        mp-toggle-button, button {
+            height: var(--__mp-font-size);
+        }
         .editor-container {
             order: 2;
             border: 1px solid black;
@@ -91,6 +95,7 @@ export class MarkdownEditor extends LitElement {
             display: flex;
             gap: 0.5rem;
             height: auto;
+            /* min-height: 5rem; */
             resize: vertical;
             overflow: hidden;
         }
@@ -101,24 +106,24 @@ export class MarkdownEditor extends LitElement {
         }
         .md-editor {
             flex: 1 1 50%;
+            padding: 2px;
             white-space: pre-wrap;
-            height: 100%;
+            border: var(--__mp-border);
+            /* height: 100%; */
             max-height: 100%;
             resize: none;
             overflow-y: auto;
+            margin: 0;
 
         }
-
         .md-render {
             flex: 1 1 50%;
             padding: 2px;
-            font-size: 0.75rem;
-            /* min-height: 5rem; */
             max-height: 100%;
-            height: 100%;
+            border: var(--__mp-border);
+            background-color: var(--__mp-field-bg-color);
             overflow-y: auto;
-            border-color: ButtonBorder;
-            background-color: var(--mp-panel-area-color);
+            margin: 0;
         }
     }
 
@@ -214,23 +219,23 @@ export class MarkdownEditor extends LitElement {
   }
 
   toggleEditor(ev:Event | undefined) {
-    if (this.toggl_btn_editor.toggled) this.editor_elem.style.display = "block";
+    if (this.toggl_btn_editor.on) this.editor_elem.style.display = "block";
     else {
       this.editor_elem.style.display = "none";
       if (this.render_elem.style.display === "none") {
         this.render_elem.style.display = "block";
-        this.toggl_btn_render.toggled = true;
+        this.toggl_btn_render.on = true;
       }
     };
   }
 
   toggleRender(ev:Event | undefined) {
-    if (this.toggl_btn_render.toggled) this.render_elem.style.display = "block";
+    if (this.toggl_btn_render.on) this.render_elem.style.display = "block";
     else {
       this.render_elem.style.display = "none";
       if (this.editor_elem.style.display === "none") {
         this.editor_elem.style.display = "block";
-        this.toggl_btn_editor.toggled = true;
+        this.toggl_btn_editor.on= true;
 
       }
     }
@@ -262,9 +267,9 @@ export class MarkdownEditor extends LitElement {
             <div part="render-element" class="md-render markdown-body" ></div>
           </div>
           <div class="button-container" style=${styleMap(buttonStyle)}>
-              <mp-toggle-button part="button-edit" id="toggle_btn_editor" @click=${this.toggleEditor} toggled>🖊️</mp-toggle-button>
-              <mp-toggle-button part="button-render" id="toggle_btn_render" @click=${this.toggleRender} toggled>MD</mp-toggle-button>
-              <input part="button-fullscreen" type="button" value="[ ]" @click=${this.fullscreen}/>
+              <mp-toggle-button part="button-edit" id="toggle_btn_editor" @click=${this.toggleEditor} on>🖊️</mp-toggle-button>
+              <mp-toggle-button part="button-render" id="toggle_btn_render" @click=${this.toggleRender} on>MD</mp-toggle-button>
+              <button part="button-fullscreen" type="button" @click=${this.fullscreen}>[ ]</button>
           </div>
 
 
