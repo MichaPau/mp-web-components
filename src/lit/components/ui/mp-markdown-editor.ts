@@ -1,5 +1,6 @@
 import { CSSResult, CSSResultArray, CSSResultGroup, CSSResultOrNative, LitElement, PropertyValues, css, html,  } from 'lit';
-import {styleMap} from 'lit/directives/style-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
+import { classMap } from 'lit/directives/class-map.js';
 import { customElement, property, state, query } from 'lit/decorators.js';
 import { unsafeCSS } from 'lit';
 import { adoptStyles } from 'lit';
@@ -50,7 +51,13 @@ export class MarkdownEditor extends LitElement {
   justifyButtons: "flex-start"|"flex-end"|"center"|"space-between"|"space-around"|"space-evenly" = "flex-start";
 
   @state()
-  edit_mode = true;
+  show_editor = true;
+
+  @state()
+  show_render = true;
+
+  @state()
+  isFullscreen = false;
 
   @query(".md-editor")
   editor_elem: HTMLTextAreaElement;
@@ -104,26 +111,38 @@ export class MarkdownEditor extends LitElement {
             display: flex;
             gap: 0.25rem;
         }
-        .md-editor {
+
+        .md-editor, .md-render {
             flex: 1 1 50%;
             padding: 2px;
+            margin: 0;
+            max-height: 100%;
+            overflow-y: auto;
+            height: 100%;
+        }
+        .md-editor {
+            display: block;
             white-space: pre-wrap;
             border: var(--__mp-border);
-            /* height: 100%; */
-            max-height: 100%;
             resize: none;
-            overflow-y: auto;
-            margin: 0;
 
         }
         .md-render {
-            flex: 1 1 50%;
-            padding: 2px;
-            max-height: 100%;
+            display: block;
             border: var(--__mp-border);
             background-color: var(--__mp-field-bg-color);
-            overflow-y: auto;
-            margin: 0;
+        }
+
+        .hide {
+            /* display: none; */
+            visibility: collapse;
+
+            /* flex: 0 0 0px; */
+        }
+        .show {
+            /* display: block; */
+            visibility: visible;
+            /* flex: 1 1 50%; */
         }
     }
 
@@ -166,15 +185,15 @@ export class MarkdownEditor extends LitElement {
       this.render_md();
     }
 
-    this.toggl_btn_render.toggled = true;
-    this.toggl_btn_editor.toggled = true;
+    this.toggl_btn_render.on = this.show_render;
+    this.toggl_btn_editor.on = this.show_editor;
+    // this.show_editor = true;
+    // this.show_render = true;
   }
 
   fullscreenChangeHandler= (ev:Event) => {
     if(!document.fullscreenElement) {
-      //this.changeMode();
-      this.toggleEditor(null);
-      this.toggleRender(null);
+      this.isFullscreen = false;
     }
   }
   inputChanged = (ev: Event) => {
@@ -218,32 +237,47 @@ export class MarkdownEditor extends LitElement {
     // console.log("render:", this.render_elem.innerHTML);
   }
 
-  toggleEditor(ev:Event | undefined) {
-    if (this.toggl_btn_editor.on) this.editor_elem.style.display = "block";
-    else {
-      this.editor_elem.style.display = "none";
-      if (this.render_elem.style.display === "none") {
-        this.render_elem.style.display = "block";
-        this.toggl_btn_render.on = true;
-      }
-    };
+  toggleEditor(ev:Event) {
+    this.show_editor = (ev as CustomEvent).detail;
+
+    if(!this.show_render && !this.show_render) {
+      this.show_render = true;
+      this.toggl_btn_render.on = true;
+    }
+
+
+    // if (btn_is_on) this.editor_elem.style.display = "block";
+    // else {
+    //   this.editor_elem.style.display = "none";
+    //   if (this.render_elem.style.display === "none") {
+    //     this.render_elem.style.display = "block";
+    //     this.toggl_btn_render.on = true;
+    //   }
+    // };
   }
 
-  toggleRender(ev:Event | undefined) {
-    if (this.toggl_btn_render.on) this.render_elem.style.display = "block";
-    else {
-      this.render_elem.style.display = "none";
-      if (this.editor_elem.style.display === "none") {
-        this.editor_elem.style.display = "block";
-        this.toggl_btn_editor.on= true;
+  toggleRender(ev:Event) {
+    this.show_render = (ev as CustomEvent).detail;
 
-      }
+    if(!this.show_render && !this.show_render) {
+      this.show_editor = true;
+      this.toggl_btn_editor.on = true;
     }
+    // if (btn_is_on) this.render_elem.style.display = "block";
+    // else {
+    //   this.render_elem.style.display = "none";
+    //   if (this.editor_elem.style.display === "none") {
+    //     this.editor_elem.style.display = "block";
+    //     this.toggl_btn_editor.on= true;
+
+    //   }
+    // }
   }
 
   fullscreen() {
-    this.editor_elem.style.display = "block";
-    this.render_elem.style.display = "block";
+    // this.editor_elem.style.display = "block";
+    // this.render_elem.style.display = "block";
+    this.isFullscreen = true;
     this.editor_container.requestFullscreen({ navigationUI: "show" });
   }
 
@@ -258,17 +292,25 @@ export class MarkdownEditor extends LitElement {
 
   render() {
     const buttonStyle = { justifyContent: this.justifyButtons};
+    const showEditor = {
+      show: this.show_editor || this.isFullscreen,
+      hide: !this.show_editor && !this.isFullscreen,
+    }
+    const showRender = {
+      show: this.show_render || this.isFullscreen,
+      hide: !this.show_render && !this.isFullscreen,
+    }
       return html`
           <div part="editor-container" class="editor-container">
-               <textarea part="edit-element"  class="md-editor"
+               <textarea part="edit-element"  class="md-editor ${classMap(showEditor)}"
                    @change=${this.liverender ? this.inputChanged : null}
                    @keydown=${this.liverender ? this.keyUp : null}
               >${this.value}</textarea>
-            <div part="render-element" class="md-render markdown-body" ></div>
+            <div part="render-element" class="md-render markdown-body ${classMap(showRender)}" ></div>
           </div>
           <div class="button-container" style=${styleMap(buttonStyle)}>
-              <mp-toggle-button part="button-edit" id="toggle_btn_editor" @click=${this.toggleEditor} on>🖊️</mp-toggle-button>
-              <mp-toggle-button part="button-render" id="toggle_btn_render" @click=${this.toggleRender} on>MD</mp-toggle-button>
+              <mp-toggle-button part="button-edit" id="toggle_btn_editor" @mp-toggle-event=${this.toggleEditor} on>🖊️</mp-toggle-button>
+              <mp-toggle-button part="button-render" id="toggle_btn_render" @mp-toggle-event=${this.toggleRender} on>MD</mp-toggle-button>
               <button part="button-fullscreen" type="button" @click=${this.fullscreen}>[ ]</button>
           </div>
 

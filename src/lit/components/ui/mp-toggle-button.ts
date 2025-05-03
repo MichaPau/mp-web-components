@@ -2,9 +2,9 @@ import { LitElement, PropertyValues, css, html } from 'lit';
 import { customElement, property, state, query } from 'lit/decorators.js';
 
 /**
- * @summary ToggleButton a button with as a toggle
+ * @summary ToggleButton a button with a toggle state (on/off)
  *
- * @property toggled - bool
+ * @property on - bool
  * @csspart button -- the button
  **/
 @customElement('mp-toggle-button')
@@ -23,10 +23,12 @@ export class ToggleButton extends LitElement {
 
       .on {
           border: var(--__mp-border-on);
+          opacity: 1;
           /* border-style: inset; */
       }
       .off {
           border: var(--__mp-border-off);
+          opacity: 0.75;
           /* border-style: outset; */
       }
 
@@ -38,9 +40,13 @@ export class ToggleButton extends LitElement {
   @property({type: Boolean, reflect: true})
   on = false;
 
-  /** toggle function. */
+  /** toggle handler */
   toggle(ev:Event) {
     this.on = !this.on;
+
+    this.dispatchEvent(
+      new CustomEvent('mp-toggle-event', { bubbles: true, composed: true, detail: this.on })
+    );
 
   }
 
@@ -73,4 +79,7 @@ declare global {
   interface HTMLElementTagNameMap {
     'mp-toggle-button': ToggleButton;
   }
+  interface GlobalEventHandlersEventMap {
+        'mp-toggle-event': CustomEvent<boolean>;
+    }
 }
