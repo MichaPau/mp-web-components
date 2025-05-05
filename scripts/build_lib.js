@@ -1,5 +1,6 @@
 import esbuild from 'esbuild';
 import { rm } from 'node:fs/promises';
+import { $ } from "bun";
 
 const outdir = './lib/dist';
 
@@ -15,7 +16,7 @@ let options = {
   format: "esm",
   outdir: outdir,
   color: true,
-  sourcemap: false,
+  sourcemap: true,
   mainFields: ['module'],
   external: ['./src/utils/*', './src/helper/*', 'lit'],
   metafile: false,
@@ -27,3 +28,8 @@ let options = {
 console.log("start lib build (esbuild)");
 let result = await esbuild.build(options);
 console.log("end dev build (esbuild)");
+
+console.log("start tsc declarations");
+let result2 = await $`bunx tsc`;
+console.log(result2);
+console.log("end ts decalarations");

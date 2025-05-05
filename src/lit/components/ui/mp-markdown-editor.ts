@@ -5,11 +5,11 @@ import { customElement, property, state, query } from 'lit/decorators.js';
 import { unsafeCSS } from 'lit';
 import { adoptStyles } from 'lit';
 import { micromark } from 'micromark';
-import { fromMarkdown, CompileContext } from 'mdast-util-from-markdown';
+// import { fromMarkdown, CompileContext } from 'mdast-util-from-markdown';
 
 import { defaultStyleTokens } from '../../styles/mp-default-style-tokens.js';
 import './mp-toggle-button.js';
-import { ToggleButton } from './mp-toggle-button.js';
+import ToggleButton  from './mp-toggle-button.js';
 
 
 //https://github.com/WICG/webcomponents/issues/909

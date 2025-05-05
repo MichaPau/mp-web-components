@@ -8,19 +8,20 @@
     "noEmitOnError": true,
     "strict": false,
     "esModuleInterop": true,
+    "emitDeclarationOnly": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "importHelpers": false,
-    "outDir": "tsc-out",
+    "outDir": "./lib/dist",
     "sourceMap": true,
     "inlineSources": true,
-    "rootDir": "./",
+    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
     "useDefineForClassFields": false,
     "plugins": [{ "name": "ts-lit-plugin" }],
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/lit/**/*.ts", "src/native/**/*.ts"],
 
 }

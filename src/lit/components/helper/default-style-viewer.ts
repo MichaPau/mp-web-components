@@ -2,7 +2,7 @@ import { LitElement, PropertyValues, css, html } from 'lit';
 import { customElement, property, state, query } from 'lit/decorators.js';
 
 import "../ui/mp-multi-select.js";
-import { MultiSelect } from '../ui/mp-multi-select.js';
+import MultiSelect from '../ui/mp-multi-select.js';
 
 @customElement('default-style-viewer')
 export class DefaultStyleViewer extends LitElement {
