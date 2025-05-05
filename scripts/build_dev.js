@@ -4,6 +4,7 @@ import { parseArgs } from "util";
 
 const outdir = './www/dist';
 
+//bun run build-dev --clearout --watchserve
 const { values, positionals } = parseArgs({
   args: Bun.argv,
   options: {
@@ -47,13 +48,15 @@ if (values["clearout"]) {
 }
 
 let options = {
-  entryPoints: ['./src/**/*.ts'],
+  entryPoints: ['./src/lit/**/*.ts', './src/native/**/*.ts'],
   bundle: true,
   splitting: true,
   format: "esm",
   outdir: outdir,
   color: true,
-  // external: ['./src/utils/*'],
+  sourcemap: false,
+  mainFields: ['module'],
+  external: ['./src/utils/*', './src/helper/*', 'lit'],
   metafile: false,
   chunkNames: 'chunks/[name]-[hash]',
   logLevel: "debug",

@@ -8,7 +8,7 @@ import { customElement, property, state, query } from 'lit/decorators.js';
  * @csspart button -- the button
  **/
 @customElement('mp-toggle-button')
-export class ToggleButton extends LitElement {
+export default class ToggleButton extends LitElement {
   static styles = css`
       :host {
           display: inline-block;
