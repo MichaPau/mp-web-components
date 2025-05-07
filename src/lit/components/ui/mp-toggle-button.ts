@@ -8,7 +8,7 @@ import { customElement, property, state, query } from 'lit/decorators.js';
  * @csspart button -- the button
  **/
 @customElement('mp-toggle-button')
-export default class ToggleButton extends LitElement {
+export class ToggleButton extends LitElement {
   static styles = css`
       :host {
           display: inline-block;
@@ -43,6 +43,7 @@ export default class ToggleButton extends LitElement {
   /** toggle handler */
   toggle(ev:Event) {
     this.on = !this.on;
+    console.log("ToggleButton::toggle again");
 
     this.dispatchEvent(
       new CustomEvent('mp-toggle-event', { bubbles: true, composed: true, detail: this.on })

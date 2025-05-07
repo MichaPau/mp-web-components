@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { defaultStyleTokens } from '../../styles/mp-default-style-tokens.js';
 
 @customElement('mp-multi-select')
-export default class MultiSelect extends LitElement {
+export class MultiSelect extends LitElement {
   static styles = [
     defaultStyleTokens,
     css`

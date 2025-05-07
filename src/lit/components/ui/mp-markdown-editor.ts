@@ -9,7 +9,7 @@ import { micromark } from 'micromark';
 
 import { defaultStyleTokens } from '../../styles/mp-default-style-tokens.js';
 import './mp-toggle-button.js';
-import ToggleButton  from './mp-toggle-button.js';
+import { ToggleButton }  from './mp-toggle-button.js';
 
 
 //https://github.com/WICG/webcomponents/issues/909

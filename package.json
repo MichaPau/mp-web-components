@@ -1,7 +1,9 @@
 {
   "name": "mp-webcomponents",
-  "version": "0.0.1",
-  "module": "index.ts",
+  "description": "some webcomponents",
+  "version": "0.0.2",
+  "module": "index.js",
+  "main": "index.js",
   "type": "module",
   "files": [
     "./lib/dist/*"
@@ -13,8 +15,7 @@
     "build-test": "esbuild index.ts --bundle --outfile=out.js",
     "build-lib": "bun ./scripts/build_lib.js",
     "build-dev": "bun ./scripts/build_dev.js",
-    "build-dev-bun": "bun ./scripts/dev_with_bun.js",
-    "build-bun": "bun ./scripts/build_with_bun.js",
+    "build-tsc": "bun ./scripts/build_tsc_only.js",
     "start": "bun run build-s -- --servedir=www",
     "watch": "bun run build-s -- --watch",
     "server-start": "web-dev-server --open / --node-resolve"

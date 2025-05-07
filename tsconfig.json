@@ -8,7 +8,7 @@
     "noEmitOnError": true,
     "strict": false,
     "esModuleInterop": true,
-    "emitDeclarationOnly": true,
+    "emitDeclarationOnly": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "downlevelIteration": true,
@@ -22,6 +22,7 @@
     "useDefineForClassFields": false,
     "plugins": [{ "name": "ts-lit-plugin" }],
   },
-  "include": ["src/lit/**/*.ts", "src/native/**/*.ts"],
+  "include": ["src/lit/components/ui/*.ts", "src/lit/components/layouts/*.ts", "src/index.ts"],
+  "exclude": []
 
 }
