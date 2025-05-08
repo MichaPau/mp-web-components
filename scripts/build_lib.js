@@ -2,7 +2,7 @@ import esbuild from 'esbuild';
 import { rm } from 'node:fs/promises';
 import { $ } from "bun";
 
-const outdir = './lib/dist';
+const outdir = './dist';
 
 await rm(outdir, {
     recursive: true,
@@ -10,7 +10,7 @@ await rm(outdir, {
 })
 
 let options = {
-  entryPoints: ['./src/lit/**/*.ts', './src/native/**/*.ts'],
+  entryPoints: ['./src/**/*.ts'],
   bundle: false,
   splitting: false,
   format: "esm",

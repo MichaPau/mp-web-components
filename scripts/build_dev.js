@@ -48,7 +48,7 @@ if (values["clearout"]) {
 }
 
 let options = {
-  entryPoints: ['./src/lit/**/*.ts', './src/native/**/*.ts'],
+  entryPoints: ['./src/**/*.ts'],
   bundle: true,
   splitting: true,
   format: "esm",
