@@ -1,15 +1,11 @@
-# webcomponents
+# mp-webcomponents
 
-To install dependencies:
+Personal set of web components.
 
-```bash
-bun install
-```
+package-manger: bun
 
-To run:
+dependencies used:
 
-```bash
-bun run index.ts
-```
+ * [Lit](https://github.com/lit/lit/)
+ * [micromark](https://github.com/micromark/micromark)
 
-This project was created using `bun init` in bun v1.1.29. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
