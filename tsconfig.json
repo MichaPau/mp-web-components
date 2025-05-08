@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "downlevelIteration": true,
     "importHelpers": false,
-    "outDir": "./lib/dist",
+    "outDir": "./dist",
     "sourceMap": true,
     "inlineSources": true,
     "rootDir": "./src",
@@ -22,7 +22,7 @@
     "useDefineForClassFields": false,
     "plugins": [{ "name": "ts-lit-plugin" }],
   },
-  "include": ["src/lit/components/ui/*.ts", "src/lit/components/layouts/*.ts", "src/index.ts"],
+  "include": ["src/components/ui/*.ts", "src/components/layouts/*.ts", "src/index.ts"],
   "exclude": []
 
 }

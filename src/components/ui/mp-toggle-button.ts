@@ -17,7 +17,7 @@ export class ToggleButton extends LitElement {
       }
       button {
           border-radius: 4px;
-          height: 100%;
+          /* height: 100%; */
           /* border-color: #151513; */
       }
 

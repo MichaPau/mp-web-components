@@ -92,9 +92,9 @@ export class MarkdownEditor extends LitElement {
             box-sizing: border-box;
         }
 
-        mp-toggle-button, button {
+        /* mp-toggle-button, button {
             height: var(--__mp-font-size);
-        }
+        } */
         .editor-container {
             order: 2;
             border: 1px solid black;

@@ -48,15 +48,19 @@ if (values["clearout"]) {
 }
 
 let options = {
-  entryPoints: ['./src/**/*.ts'],
+  entryPoints: [
+    './src/components/ui/*.ts',
+    './src/components/layouts/*.ts'
+  ],
   bundle: true,
   splitting: true,
   format: "esm",
   outdir: outdir,
   color: true,
   sourcemap: false,
+  outbase: "./src",
   mainFields: ['module'],
-  external: ['./src/utils/*', './src/helper/*', 'lit'],
+  // external: ['./src/utils/*', './src/helper/*', 'lit'],
   metafile: false,
   chunkNames: 'chunks/[name]-[hash]',
   logLevel: "debug",
