@@ -12,14 +12,8 @@ export class MultiSelect extends LitElement {
           display: inline-block;
           box-sizing: border-box;
           --__mp-multi-select-header-row-height: var(--mp-multi-select-header-row-height, var(--__mp-font-size)*1.5);
-          /* --multi-select-font-size: calc(var(--multi-select-header-row-height) * 0.6); */
-          /* --multi-select-font-size: 1rem; */
-          /* --multi-select-border-color: #aaa; */
-          /* --multi-select-border-color: ButtonBorder; */
-          /* --multi-select-border: 1px solid ButtonBorder; */
+         
           max-height: 100%;
-
-          /* color-scheme: light dark; */
 
       }
       * {
@@ -28,17 +22,23 @@ export class MultiSelect extends LitElement {
       }
       button, input {
           display: inline-block;
+          box-sizing: content-box; 
           max-height: var(--__mp-multi-select-header-row-height);
+          height: var(--__mp-multi-select-header-row-height);
           margin: 0;
           padding: 0;
+
+          &::-moz-focus-inner {
+            padding: 0;
+            border: 0;
+          }
       }
       #container {
-          /* border: 1px solid var(--multi-select-border-color);
-          border-radius: 4px; */
+          position: relative;
           border: var(--__mp-border);
           background-color: var(--__mp-field-bg-color);
-          /* max-height: var(--multi-select-header-row-height);
-          overflow: visible; */
+          min-height: var(--__mp-multi-select-header-row-height);
+          /* height: 100%; */
       }
 
       #input-container {
@@ -58,18 +58,16 @@ export class MultiSelect extends LitElement {
           align-items: center;
           color:#999;
           gap: 0.25rem;
-          /* font-size: var(--mp-font-size); */
           text-wrap: nowrap;
           overflow: hidden;
+          height: var(--__mp-multi-select-header-row-height);
 
       }
       #the-select {
           box-sizing: border-box;
           position: absolute;
           width: 100%;
-          /* font-size: var(--mp-font-size); */
           border: var(--__mp-border);
-          /* right: var(--__mp-border-width); */
           z-index: 99;
       }
       #search-input {
@@ -77,11 +75,8 @@ export class MultiSelect extends LitElement {
           min-width: 0;
           box-sizing: border-box;
           align-self: flex-start;
-          height: var(--__mp-multi-select-header-row-height);
-          /* font-size: var(--mp-font-size); */
-
-
-
+          max-height: var(--__mp-multi-select-header-row-height);
+          
       }
       option {
           /* font-size: var(--mp-font-size); */
@@ -104,14 +99,11 @@ export class MultiSelect extends LitElement {
       } */
       details {
           position: relative;
+          /* height: 100%; */
       }
-      /* details[open] {
-
-      } */
+     
       details[open] summary > .open-icon {
-        /* border-bottom: 1px solid #aaa; */
         transform: rotate(90deg);
-
       }
       summary {
           text-align: center;
@@ -120,6 +112,7 @@ export class MultiSelect extends LitElement {
           gap: 0.5rem;
           /* padding: 0.25rem; */
           padding: 2px;
+          /* height: 100%; */
 
       }
 
@@ -160,7 +153,7 @@ export class MultiSelect extends LitElement {
   @property({ type: Number, reflect: true })
   size = 0;
 
-  @property({ type: Boolean, reflect: true })
+  @property({ type: Boolean, reflect: true, attribute: "search-enabled" })
   searchEnabled = false;
 
   @property({ type: Boolean, reflect: true })

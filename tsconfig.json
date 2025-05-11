@@ -22,7 +22,11 @@
     "useDefineForClassFields": false,
     "plugins": [{ "name": "ts-lit-plugin" }],
   },
-  "include": ["src/components/ui/*.ts", "src/components/layouts/*.ts", "src/index.ts"],
+  "include": [
+    "src/untracked/**/*.ts",
+    "src/components/ui/*.ts", 
+    "src/components/layouts/*.ts", 
+    "src/index.ts"],
   "exclude": []
 
 }

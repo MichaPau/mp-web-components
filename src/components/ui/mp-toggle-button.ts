@@ -43,7 +43,6 @@ export class ToggleButton extends LitElement {
   /** toggle handler */
   toggle(ev:Event) {
     this.on = !this.on;
-    console.log("ToggleButton::toggle again");
 
     this.dispatchEvent(
       new CustomEvent('mp-toggle-event', { bubbles: true, composed: true, detail: this.on })

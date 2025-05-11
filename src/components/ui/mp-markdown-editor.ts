@@ -44,8 +44,8 @@ export class MarkdownEditor extends LitElement {
   @property({ type: Boolean, reflect: true })
   liverender = true;
 
-  @property({ type: Number, reflect: true })
-  id;
+  @property({ type: Number, reflect: true, attribute: "parse-timeout" })
+  parseTimeout = 500;
 
   @property({ type: String, attribute: "justify-buttons", reflect: true })
   justifyButtons: "flex-start"|"flex-end"|"center"|"space-between"|"space-around"|"space-evenly" = "flex-start";
@@ -118,7 +118,7 @@ export class MarkdownEditor extends LitElement {
             margin: 0;
             max-height: 100%;
             overflow-y: auto;
-            height: 100%;
+            /* height: 100%; */
         }
         .md-editor {
             display: block;
@@ -164,7 +164,7 @@ export class MarkdownEditor extends LitElement {
   }
   constructor() {
     super();
-    console.log("constructor:", this.id);
+   
   }
 
 
@@ -187,8 +187,7 @@ export class MarkdownEditor extends LitElement {
 
     this.toggl_btn_render.on = this.show_render;
     this.toggl_btn_editor.on = this.show_editor;
-    // this.show_editor = true;
-    // this.show_render = true;
+    
   }
 
   fullscreenChangeHandler= (ev:Event) => {
@@ -204,30 +203,21 @@ export class MarkdownEditor extends LitElement {
     if(this.timeout !== null) {
       clearTimeout(this.timeout)
     }
-    this.timeout = setTimeout(this.render_md, 500);
+    if (this.parseTimeout > 0) {
+      this.timeout = setTimeout(this.render_md, this.parseTimeout);
+    } else {
+      this.render_md();
+    }
+    
   }
 
   private render_md = async () =>  {
 
-
-    //const md = this.editor_elem.textContent;
     const md = this.editor_elem.value;
 
     const html = micromark(md);
 
-    // const tree = fromMarkdown(md);
-    // console.log(tree);
-
-    //console.log(html);
-
     this.render_elem.innerHTML = html;
-
-    //this.value = this.editor_elem.value
-
-    // this.value = this.editor_elem.textContent;
-    //   const md = await marked(this.value);
-    //   this.render_elem.innerHTML = md;
-
 
   }
 
@@ -244,16 +234,6 @@ export class MarkdownEditor extends LitElement {
       this.show_render = true;
       this.toggl_btn_render.on = true;
     }
-
-
-    // if (btn_is_on) this.editor_elem.style.display = "block";
-    // else {
-    //   this.editor_elem.style.display = "none";
-    //   if (this.render_elem.style.display === "none") {
-    //     this.render_elem.style.display = "block";
-    //     this.toggl_btn_render.on = true;
-    //   }
-    // };
   }
 
   toggleRender(ev:Event) {
@@ -263,20 +243,9 @@ export class MarkdownEditor extends LitElement {
       this.show_editor = true;
       this.toggl_btn_editor.on = true;
     }
-    // if (btn_is_on) this.render_elem.style.display = "block";
-    // else {
-    //   this.render_elem.style.display = "none";
-    //   if (this.editor_elem.style.display === "none") {
-    //     this.editor_elem.style.display = "block";
-    //     this.toggl_btn_editor.on= true;
-
-    //   }
-    // }
   }
 
   fullscreen() {
-    // this.editor_elem.style.display = "block";
-    // this.render_elem.style.display = "block";
     this.isFullscreen = true;
     this.editor_container.requestFullscreen({ navigationUI: "show" });
   }
