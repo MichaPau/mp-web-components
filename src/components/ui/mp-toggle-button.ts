@@ -11,25 +11,27 @@ import { customElement, property, state, query } from 'lit/decorators.js';
 export class ToggleButton extends LitElement {
   static styles = css`
       :host {
-          display: inline-block;
+          display: inline- block;
+          
           --__mp-border-on: var(--mp-border-on, 2px inset ButtonBorder);
           --__mp-border-off: var(--mp-border-off, 2px outset ButtonBorder);
       }
+      * {
+            box-sizing: border-box;
+        }
       button {
+          display: block;
           border-radius: 4px;
-          /* height: 100%; */
-          /* border-color: #151513; */
+          
       }
 
       .on {
           border: var(--__mp-border-on);
           opacity: 1;
-          /* border-style: inset; */
       }
       .off {
           border: var(--__mp-border-off);
           opacity: 0.75;
-          /* border-style: outset; */
       }
 
       `;
@@ -70,9 +72,7 @@ export class ToggleButton extends LitElement {
     this.toggle_styles();
   }
   render() {
-      return html`
-        <button part="button" @click=${this.toggle} class="off"><slot/></button>
-    `;
+      return html`<button part="button" @click=${this.toggle} class="off"><slot></slot></button>`;
   }
 }
 declare global {

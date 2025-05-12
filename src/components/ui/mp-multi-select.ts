@@ -18,7 +18,6 @@ export class MultiSelect extends LitElement {
       }
       * {
           box-sizing: border-box;
-          font-size: inherit;
       }
       button, input {
           display: inline-block;
@@ -27,11 +26,15 @@ export class MultiSelect extends LitElement {
           height: var(--__mp-multi-select-header-row-height);
           margin: 0;
           padding: 0;
+          /* font-size: 75%;
+          height: 100%; */
+          
+      }
+      .no-selection-style {
+        border: none;
+        background: none;
 
-          &::-moz-focus-inner {
-            padding: 0;
-            border: 0;
-          }
+
       }
       #container {
           position: relative;
@@ -99,7 +102,7 @@ export class MultiSelect extends LitElement {
       } */
       details {
           position: relative;
-          /* height: 100%; */
+          
       }
      
       details[open] summary > .open-icon {
@@ -110,10 +113,7 @@ export class MultiSelect extends LitElement {
           display: flex;
           align-items: center;
           gap: 0.5rem;
-          /* padding: 0.25rem; */
           padding: 2px;
-          /* height: 100%; */
-
       }
 
       #icon  {
@@ -122,14 +122,8 @@ export class MultiSelect extends LitElement {
       .open-icon {
           cursor: pointer;
           user-select: none;
-          /* height: 1.2rem;
-          width: 1.2rem; */
           height: var(--__mp-font-size);
           width: var(--__mp-font-size);
-          /* align-self: flex-start; */
-          /* align-content: center; */
-          /* font-size: var(--multi-select-font-size); */
-          /* transform: rotate(90deg); */
           transition: all 0.15s;
           transition-timing-function: ease-in;
       }
@@ -277,32 +271,12 @@ export class MultiSelect extends LitElement {
     //detail.open = false;
   }
   selectionChangeHandler(ev: Event) {
+    console.log("multiselect2::selectionChenaged");
     const select = ev.target as HTMLSelectElement;
-    const container = this.shadowRoot.getElementById("tag-container");
-    for (const child of container.children) {
-      child.removeEventListener("click", this.tagElemClickListener);
-      child.removeEventListener("keydown", this.tagElemKeydownListener);
-    }
-    container.replaceChildren();
 
     this.values = [];
-    //const search_input = this.shadowRoot.getElementById("search-input");
     const values = Array.from(select.selectedOptions).map((o) => {
-
       this.values.push({ "label": o.label, "value": o.value });
-      let elem = document.createElement("button");
-      elem.innerHTML = o.label;
-      // elem.classList.add("tag");
-      elem.setAttribute("part", "tag");
-      elem.setAttribute("value", o.value);
-      elem.setAttribute("tabindex", "0");
-
-      elem.addEventListener("click", this.tagElemClickListener);
-      elem.addEventListener("keydown", this.tagElemKeydownListener);
-
-      let r = container.appendChild(elem);
-
-
     });
     this.manageInternals();
 
@@ -311,7 +285,7 @@ export class MultiSelect extends LitElement {
     ev.stopPropagation();
     //ev.preventDefault();
     if (ev.key === "Enter") {
-      const tag = ev.target as HTMLElement;
+      const tag = ev.target as HTMLButtonElement;
       this.removeTag(tag);
     }
   }
@@ -319,25 +293,29 @@ export class MultiSelect extends LitElement {
 
     ev.stopPropagation();
     ev.preventDefault();
-    const tag = ev.target as HTMLElement;
+    const tag = ev.target as HTMLButtonElement;
     this.removeTag(tag);
 
   }
 
-  removeTag(tag: HTMLElement) {
-    const t = tag.innerHTML;
-    const parent = tag.parentNode;
-    parent.removeChild(tag);
+  removeTag(tag: HTMLButtonElement) {
+    console.log("multiselect::removetag");
+    //const t = tag.innerHTML;
+    // const parent = tag.parentNode;
+    // parent.removeChild(tag);
 
     const select: HTMLSelectElement = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
 
-    let u = Array.from(select.selectedOptions).find((item) => item.value === t);
+    let u = Array.from(select.selectedOptions).find((item) => item.value === tag.value);
     u.selected = false;
 
     this.values = Array.from(select.selectedOptions).map((item) => { return { "label": item.label, "value": item.value } });
 
     this.manageInternals();
-    if (parent.children.length === 0) (parent as HTMLElement).innerHTML = "no selection";
+    // if (parent.children.length === 0) { 
+    //   (parent as HTMLElement).innerHTML = "no selection";
+    //   console.log("length to zero");
+    // }
   }
   onSearchInput(ev: InputEvent) {
     const search = this.shadowRoot.getElementById("the-select") as HTMLSelectElement;
@@ -386,7 +364,16 @@ export class MultiSelect extends LitElement {
                         <svg id="icon" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="currentColor" class="bi bi-arrow-right-square-fill" viewBox="0 0 16 16"> <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1z"/> </svg>
                     </div>
                     <div id="input-container">
-                        <div id="tag-container" part="tag-container">no selection</div>
+                        <div id="tag-container" part="tag-container">
+                        ${this.values.length === 0 ? html`<button class="no-selection-style" disabled>no selection...</button>` : html`
+                          ${this.values.map((v) => html`
+                            <button 
+                              tabindex="0" value=${v.value}
+                              @click=${this.tagElemClickListener} 
+                              @keydown=${this.tagElemKeydownListener}>${v.label}</button>
+                            `)}
+                        `}
+                        </div>
                             ${this.searchEnabled ?
                                 html`<input id="search-input" type="text" placeholder="search" @input=${this.onSearchInput} ?disabled=${this.disabled} />` :
                                 html``
@@ -406,3 +393,4 @@ declare global {
   }
 }
 //<details id="the-detail" @click=${this.detailsClick} @mousedown=${this.detailsToggle}>
+// ${this.values.length === 0 ? html`<button>no selection</button>` : ``}

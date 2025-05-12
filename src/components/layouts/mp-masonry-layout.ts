@@ -109,7 +109,7 @@ export class MasonryLayout extends LitElement {
         for(var i=0; i < colCount; i++) {
             this.blocks.push(this.itemGap);
         }
-        console.log(this.blocks);
+        //console.log(this.blocks);
 
     }
     // https://benholland.me/javascript/2012/02/20/how-to-build-a-site-that-works-like-pinterest.html
@@ -128,7 +128,7 @@ export class MasonryLayout extends LitElement {
 
             this.blocks[index] = min + element.offsetHeight + this.itemGap;
         });
-        console.log(this.blocks);
+        //console.log(this.blocks);
     }
     get _slottedChildren() {
 

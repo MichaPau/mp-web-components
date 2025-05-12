@@ -110,6 +110,7 @@ export class MarkdownEditor extends LitElement {
             order: 1;
             display: flex;
             gap: 0.25rem;
+            align-items: center;
         }
 
         .md-editor, .md-render {
@@ -230,7 +231,7 @@ export class MarkdownEditor extends LitElement {
   toggleEditor(ev:Event) {
     this.show_editor = (ev as CustomEvent).detail;
 
-    if(!this.show_render && !this.show_render) {
+    if(!this.show_render && !this.show_editor) {
       this.show_render = true;
       this.toggl_btn_render.on = true;
     }
@@ -239,7 +240,7 @@ export class MarkdownEditor extends LitElement {
   toggleRender(ev:Event) {
     this.show_render = (ev as CustomEvent).detail;
 
-    if(!this.show_render && !this.show_render) {
+    if(!this.show_render && !this.show_editor) {
       this.show_editor = true;
       this.toggl_btn_editor.on = true;
     }
@@ -273,14 +274,14 @@ export class MarkdownEditor extends LitElement {
           <div part="editor-container" class="editor-container">
                <textarea part="edit-element"  class="md-editor ${classMap(showEditor)}"
                    @change=${this.liverender ? this.inputChanged : null}
-                   @keydown=${this.liverender ? this.keyUp : null}
-              >${this.value}</textarea>
+                   @keydown=${this.liverender ? this.keyUp : null} .value=${this.value}
+              ></textarea>
             <div part="render-element" class="md-render markdown-body ${classMap(showRender)}" ></div>
           </div>
           <div class="button-container" style=${styleMap(buttonStyle)}>
               <mp-toggle-button part="button-edit" id="toggle_btn_editor" @mp-toggle-event=${this.toggleEditor} on>🖊️</mp-toggle-button>
               <mp-toggle-button part="button-render" id="toggle_btn_render" @mp-toggle-event=${this.toggleRender} on>MD</mp-toggle-button>
-              <button part="button-fullscreen" type="button" @click=${this.fullscreen}>[ ]</button>
+              <button part="button-fullscreen" @click=${this.fullscreen}>[ ]</button>
           </div>
 
 

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <title>Web components playground</title>
+    <meta name="color-scheme" content="dark light">
+    
+    <script type="module" src="../src/components/ui/mp-toggle-button.js"></script>
+    <script type="module" src="../src/components/ui/mp-multi-select.js"></script>
+    
+    <script type="module" src="../src/components/ui/mp-markdown-editor.js"></script>
+    <script type="module" src="../src/components/ui/test.js"></script>
+    
+    <!-- <link rel="stylesheet" href="./styles/markdown-styles.css"> -->
+    <style>
+        :root {
+            /* --mp-font-size: 1.5rem;; */
+            font-size: 32px;
+        }
+        .light {
+            color-scheme: light;
+        }
+        .dark {
+            color-scheme: dark;
+        }
+        html, body {
+            margin: 0;
+            height: 100%;
+
+        }
+        * {
+            box-sizing: border-box;
+        }
+        .vertical, .horizontal {
+            gap: 0.5rem;
+            padding: 0.25rem;
+            border: 1px solid cyan;
+        }
+        .vertical {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            
+        }
+        .horizontal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .main-container {
+            justify-content: flex-start;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+        }
+        .normal {
+            width: 100%;
+        }
+        .big {
+            min-height: 6rem;
+        }
+        
+
+
+    </style>
+</head>
+<script>
+
+function changeColor() {
+  
+  if (document.documentElement.style.getPropertyValue('color-scheme') === 'dark') {
+    document.documentElement.style.setProperty('color-scheme', 'light');
+  } else {
+    document.documentElement.style.setProperty('color-scheme', 'dark');
+  }
+
+}
+</script>
+<body>
+   
+    <mp-toggle-button>Toggle</mp-toggle-button>
+    <div class="vertical main-container">
+        <div class="horizontal"><button onclick="changeColor()">color-scheme</button></div>
+        <mp-markdown-editor value="# header &#13;&#10;&#13;&#10;&#13;&#10; ## header2 &#13;&#10;&#13;&#10; ### header3"></mp-markdown-editor>
+        <div class="horizontal">
+            <mp-toggle-button>Toggle</mp-toggle-button>
+            <mp-toggle-button on>Toggle</mp-toggle-button>
+            <button>normal</button>
+        </div>
+        <div class="horizontal">
+            <mp-multi-select>
+                <option>one</option>
+                <option>two</option>
+                <option>three</option>
+                <option>four</option>
+                <option>five</option>
+                <option>six</option>
+                <option>seven</option>
+                <option>eight</option>
+            </mp-multi-select>
+            <mp-multi-select search-enabled>
+                <option>eins</option>
+                <option>zwei</option>
+                <option>drei</option>
+                <option>drei und halb</option>
+                <option>vier</option>
+                <option>fünf</option> 
+                <option>sechs</option>
+                <option>sieben</option>
+            </mp-multi-select>
+            <select>
+                <option>test1</option>
+                <option>test2</option>
+                <option>test3</option>
+            </select>
+        </div>
+        <!-- <div class="normal">
+        <mp-masonry-layout>
+            <span>Masonry Layout</span>
+            <div>Showcase</div>
+            <img src="./img/image_0.jpg"/>
+            <img src="./img/image_1.jpg"/>
+            <img src="./img/image_2.jpg"/>
+            <img src="./img/image_3.jpg"/>
+            <img src="./img/image_5.jpg"/>
+            <img src="./img/image_6.jpg"/>
+        </mp-masonry-layout>
+        </div> -->
+    </div>
+    
+    
+</body>
+
+
+</html>
+
+<!-- <mp-wiki-tooltip>
+    New
+    Using ‘Git Bash’ to remove the folder is the simplest way to remove all folders including subfolders in the
+    ‘node modules’. It will take a while to delete everything, but it works without any installation.
+
+    Open the project’s root folder then right-click and choose ‘Git Bash Here’, and use this command to remove the
+    node modules folder.
+    <option>one</option>
+    <option>two</option>
+    <option>three</option>
+</mp-wiki-tooltip> -->
+
+
+
+
+
