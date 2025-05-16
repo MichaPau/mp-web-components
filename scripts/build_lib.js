@@ -11,8 +11,8 @@ await rm(outdir, {
 
 let options = {
   entryPoints: ['./src/**/*.ts'],
-  bundle: false,
-  splitting: false,
+  bundle: true,
+  splitting: true,
   format: "esm",
   outdir: outdir,
   color: true,

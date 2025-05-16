@@ -80,71 +80,82 @@ export class MarkdownEditor extends LitElement {
     defaultStyleTokens,
     css`
     :host {
+        display: block;
+        resize: vertical;
+        overflow: hidden;
+        height: auto;
+        width: 100%;
+        border: var(--__mp-border);
+        font-size: 0.5rem;
+        padding: 0.25rem 0.25rem 0.5rem;
+        min-height: 3rem;
+        * {
+            display: block;
+            box-sizing: border-box;
+        }
+    }
 
-        box-sizing: border-box;
+
+
+    .main-container {
         display: flex;
         flex-direction: column;
         width: 100%;
         gap: 0.25rem;
-        height: auto;
+        height: 100%;
+        /* resize: vertical;
+        overflow: hidden; */
+        /* border: 2px solid red; */
+    }
+    .editor-container {
+        width: 100%;
+        order: 2;
+        display: flex;
+        gap: 0.5rem;
+        height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        /* min-height: 5rem; */
 
-        * {
-            box-sizing: border-box;
-        }
+    }
+    .button-container {
+        order: 1;
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+    }
 
-        /* mp-toggle-button, button {
-            height: var(--__mp-font-size);
-        } */
-        .editor-container {
-            order: 2;
-            border: 1px solid black;
-            padding: 2px;
-            display: flex;
-            gap: 0.5rem;
-            height: auto;
-            /* min-height: 5rem; */
-            resize: vertical;
-            overflow: hidden;
-        }
-        .button-container {
-            order: 1;
-            display: flex;
-            gap: 0.25rem;
-            align-items: center;
-        }
+    .md-editor, .md-render {
+        flex: 1 1 50%;
+        padding: 2px;
+        margin: 0;
+        height: 100%;
+        overflow-y: auto;
+        /* height: 100%; */
+    }
+    .md-editor {
+        display: block;
+        white-space: pre-wrap;
+        border: var(--__mp-border);
+        resize: none;
 
-        .md-editor, .md-render {
-            flex: 1 1 50%;
-            padding: 2px;
-            margin: 0;
-            max-height: 100%;
-            overflow-y: auto;
-            /* height: 100%; */
-        }
-        .md-editor {
-            display: block;
-            white-space: pre-wrap;
-            border: var(--__mp-border);
-            resize: none;
+    }
+    .md-render {
+        display: block;
+        border: var(--__mp-border);
+        background-color: var(--__mp-field-bg-color);
+    }
 
-        }
-        .md-render {
-            display: block;
-            border: var(--__mp-border);
-            background-color: var(--__mp-field-bg-color);
-        }
+    .hide {
+        /* display: none; */
+        visibility: collapse;
 
-        .hide {
-            /* display: none; */
-            visibility: collapse;
-
-            /* flex: 0 0 0px; */
-        }
-        .show {
-            /* display: block; */
-            visibility: visible;
-            /* flex: 1 1 50%; */
-        }
+        /* flex: 0 0 0px; */
+    }
+    .show {
+        /* display: block; */
+        visibility: visible;
+        /* flex: 1 1 50%; */
     }
 
     `];
@@ -165,7 +176,7 @@ export class MarkdownEditor extends LitElement {
   }
   constructor() {
     super();
-   
+
   }
 
 
@@ -188,7 +199,7 @@ export class MarkdownEditor extends LitElement {
 
     this.toggl_btn_render.on = this.show_render;
     this.toggl_btn_editor.on = this.show_editor;
-    
+
   }
 
   fullscreenChangeHandler= (ev:Event) => {
@@ -209,23 +220,22 @@ export class MarkdownEditor extends LitElement {
     } else {
       this.render_md();
     }
-    
+
   }
 
   private render_md = async () =>  {
 
-    const md = this.editor_elem.value;
+    if(this.value != this.editor_elem.value) {
+      const md = this.editor_elem.value;
 
-    const html = micromark(md);
+      const html = micromark(md);
 
-    this.render_elem.innerHTML = html;
+      this.render_elem.innerHTML = html;
+      this.value = md;
+      this.dispatchEvent(new CustomEvent('mp-markdown-update', { composed: true, bubbles: true, detail: html }));
+    }
 
-  }
 
-  check(_ev:Event) {
-
-    // console.log("editor:", this.editor_elem.value);
-    // console.log("render:", this.render_elem.innerHTML);
   }
 
   toggleEditor(ev:Event) {
@@ -271,6 +281,7 @@ export class MarkdownEditor extends LitElement {
       hide: !this.show_render && !this.isFullscreen,
     }
       return html`
+          <div class="main-container">
           <div part="editor-container" class="editor-container">
                <textarea part="edit-element"  class="md-editor ${classMap(showEditor)}"
                    @change=${this.liverender ? this.inputChanged : null}
@@ -283,24 +294,17 @@ export class MarkdownEditor extends LitElement {
               <mp-toggle-button part="button-render" id="toggle_btn_render" @mp-toggle-event=${this.toggleRender} on>MD</mp-toggle-button>
               <button part="button-fullscreen" @click=${this.fullscreen}>[ ]</button>
           </div>
-
+          </div>
 
     `;
   }
 }
 
-//<button @click=${this.testHandler}>Test</button>
-// <textarea  class="md-editor"
-//     @change=${this.liverender ? this.inputChanged : null}
-//     @keydown=${this.liverender ? this.keyUp : null}
-//>${this.value}</textarea>
-
-// <div contenteditable="plaintext-only" class="md-editor"
-//     @change=${this.liverender ? this.inputChanged : null}
-//     @keydown=${this.liverender ? this.keyUp : null}
-// ></div>
 declare global {
   interface HTMLElementTagNameMap {
     'mp-markdown-editor': MarkdownEditor;
+  }
+  interface GlobalEventHandlersEventMap {
+    'mp-markdown-update': CustomEvent<string>;
   }
 }

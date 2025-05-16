@@ -4,13 +4,13 @@
 <head>
     <title>Web components playground</title>
     <meta name="color-scheme" content="dark light">
-    
+
     <script type="module" src="../src/components/ui/mp-toggle-button.js"></script>
     <script type="module" src="../src/components/ui/mp-multi-select.js"></script>
-    
+
     <script type="module" src="../src/components/ui/mp-markdown-editor.js"></script>
     <script type="module" src="../src/components/ui/test.js"></script>
-    
+
     <!-- <link rel="stylesheet" href="./styles/markdown-styles.css"> -->
     <style>
         :root {
@@ -25,23 +25,31 @@
         }
         html, body {
             margin: 0;
-            height: 100%;
+            padding: 0;
+        }
+        body {
+             height: 100%;
+             margin: 0.5rem;
+        }
 
-        }
-        * {
-            box-sizing: border-box;
-        }
         .vertical, .horizontal {
             gap: 0.5rem;
             padding: 0.25rem;
-            border: 1px solid cyan;
+            * {
+                box-sizing: border-box;
+                display: block;
+            }
+            /* border: 1px solid cyan; */
         }
         .vertical {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            
+            /* * {
+                height: auto;
+            } */
+
         }
         .horizontal {
             display: flex;
@@ -60,15 +68,26 @@
         .big {
             min-height: 6rem;
         }
-        
 
+        /* mp-markdown-editor::part(editor-container) {
+            height: 5rem;
+        } */
+        mp-markdown-editor, test-comp {
+            height: 5rem;
+        }
+
+        test-comp::part(container) {
+            /* height: 5rem; */
+        }
 
     </style>
 </head>
 <script>
-
+this.document.addEventListener("mp-markdown-update", (ev) => {
+  console.log("md update: ", ev.detail);
+});
 function changeColor() {
-  
+
   if (document.documentElement.style.getPropertyValue('color-scheme') === 'dark') {
     document.documentElement.style.setProperty('color-scheme', 'light');
   } else {
@@ -78,11 +97,14 @@ function changeColor() {
 }
 </script>
 <body>
-   
-    <mp-toggle-button>Toggle</mp-toggle-button>
+
+    <!-- <test-comp></test-comp> -->
     <div class="vertical main-container">
         <div class="horizontal"><button onclick="changeColor()">color-scheme</button></div>
+        <test-comp></test-comp>
         <mp-markdown-editor value="# header &#13;&#10;&#13;&#10;&#13;&#10; ## header2 &#13;&#10;&#13;&#10; ### header3"></mp-markdown-editor>
+        <mp-markdown-editor value="# second"></mp-markdown-editor>
+        <mp-markdown-editor value="# third"></mp-markdown-editor>
         <div class="horizontal">
             <mp-toggle-button>Toggle</mp-toggle-button>
             <mp-toggle-button on>Toggle</mp-toggle-button>
@@ -105,7 +127,7 @@ function changeColor() {
                 <option>drei</option>
                 <option>drei und halb</option>
                 <option>vier</option>
-                <option>fünf</option> 
+                <option>fünf</option>
                 <option>sechs</option>
                 <option>sieben</option>
             </mp-multi-select>
@@ -126,10 +148,10 @@ function changeColor() {
             <img src="./img/image_5.jpg"/>
             <img src="./img/image_6.jpg"/>
         </mp-masonry-layout>
-        </div> -->
+        </div>-->
     </div>
-    
-    
+
+
 </body>
 
 
@@ -146,8 +168,3 @@ function changeColor() {
     <option>two</option>
     <option>three</option>
 </mp-wiki-tooltip> -->
-
-
-
-
-

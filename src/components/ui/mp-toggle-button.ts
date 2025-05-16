@@ -12,7 +12,7 @@ export class ToggleButton extends LitElement {
   static styles = css`
       :host {
           display: inline- block;
-          
+
           --__mp-border-on: var(--mp-border-on, 2px inset ButtonBorder);
           --__mp-border-off: var(--mp-border-off, 2px outset ButtonBorder);
       }
@@ -22,7 +22,7 @@ export class ToggleButton extends LitElement {
       button {
           display: block;
           border-radius: 4px;
-          
+
       }
 
       .on {
@@ -80,6 +80,6 @@ declare global {
     'mp-toggle-button': ToggleButton;
   }
   interface GlobalEventHandlersEventMap {
-        'mp-toggle-event': CustomEvent<boolean>;
-    }
+    'mp-toggle-event': CustomEvent<boolean>;
+  }
 }
