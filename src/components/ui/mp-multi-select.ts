@@ -2,6 +2,16 @@ import { LitElement, PropertyValues, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { defaultStyleTokens } from '../../styles/mp-default-style-tokens.js';
 
+ /**
+ * @summary Multi select dropdown component. Shows selected items as button badges.
+ * @csspart main-container
+ * @csspart icon-container
+ * @csspart tag-container
+ * @csspart input-container
+ * @csspart select
+ * @slot - the select options (if no slotted options are present, the component tries the 'optionsData' property)
+ 
+ **/
 @customElement('mp-multi-select')
 export class MultiSelect extends LitElement {
   static styles = [
@@ -14,7 +24,7 @@ export class MultiSelect extends LitElement {
           --__mp-multi-select-header-row-height: var(--mp-multi-select-header-row-height, var(--__mp-font-size)*1.5);
          
           max-height: 100%;
-
+          box-sizing: border-box;
       }
       * {
           box-sizing: border-box;
@@ -140,28 +150,38 @@ export class MultiSelect extends LitElement {
   private _internals: ElementInternals;
 
   private validationMessage: string;
-
+  
+  /** data used when no options slot elements are present - slot wins (slot and this property do not get merged) **/
   @property({ attribute: false })
   optionsData: Array<{ label: string, value: string }> = [];
 
+  /** the size for the select **/
   @property({ type: Number, reflect: true })
   size = 0;
 
+  /** if the search bar is enabled and shown**/
   @property({ type: Boolean, reflect: true, attribute: "search-enabled" })
   searchEnabled = false;
 
+
+  /** disables the select and the input if shown**/
   @property({ type: Boolean, reflect: true })
   disabled = false;
 
+
+  /** check form required validity **/
   @property({ type: Boolean, reflect: true })
   required = false;
 
-  @property({ type: Boolean, reflect: true })
-  notCloseOnFocusOut = false;
+  /** default closes the select dropdown on focusout **/
+  @property({ type: Boolean, reflect: true, attribute: "no-close-on-focus-out"})
+  noCloseOnFocusOut = false;
 
+  /** a name attribute **/
   @property()
   name = "mp-multi-select";
 
+  /** the values selected: Array<{ label: string, value: string }> **/
   @property({ attribute: false })
   values: Array<{ label: string, value: string }> = [];
 
@@ -189,7 +209,7 @@ export class MultiSelect extends LitElement {
   //   return this._internals.validationMessage;
   // }
 
-  createOptions() {
+  private createOptions() {
     const select_elem = this.shadowRoot.getElementById("the-select");
     const slot = this.shadowRoot.querySelector('slot');
 
@@ -254,7 +274,7 @@ export class MultiSelect extends LitElement {
     this.manageInternals();
     this.createOptions();
 
-    if (!this.notCloseOnFocusOut)  this.addEventListener("focusout", this.closeDetail);
+    if (!this.noCloseOnFocusOut)  this.addEventListener("focusout", this.closeDetail);
 
     // const elem = this.parentElement.querySelector("mp-multi-select");
     // console.log("width: ", elem.style.position);

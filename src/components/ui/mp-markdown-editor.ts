@@ -89,7 +89,9 @@ export class MarkdownEditor extends LitElement {
         font-size: 0.5rem;
         padding: 0.25rem 0.25rem 0.5rem;
         min-height: 3rem;
-        * {
+
+        box-sizing: border-box;
+       * {
             display: block;
             box-sizing: border-box;
         }
@@ -112,7 +114,7 @@ export class MarkdownEditor extends LitElement {
         order: 2;
         display: flex;
         gap: 0.5rem;
-        height: 100%;
+        height: 100%; 
         overflow-y: auto;
         overflow-x: hidden;
         /* min-height: 5rem; */
@@ -129,9 +131,8 @@ export class MarkdownEditor extends LitElement {
         flex: 1 1 50%;
         padding: 2px;
         margin: 0;
-        height: 100%;
-        overflow-y: auto;
         /* height: 100%; */
+        overflow-y: auto;
     }
     .md-editor {
         display: block;
@@ -183,6 +184,7 @@ export class MarkdownEditor extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
     document.addEventListener("fullscreenchange", this.fullscreenChangeHandler);
+
   }
 
   disconnectedCallback(): void {
@@ -193,8 +195,8 @@ export class MarkdownEditor extends LitElement {
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
     if (this.value !== "") {
-      this.editor_elem.textContent = this.value;
-      this.render_md();
+      this.editor_elem.value = this.value;
+      this.render_md(true);
     }
 
     this.toggl_btn_render.on = this.show_render;
@@ -223,17 +225,21 @@ export class MarkdownEditor extends LitElement {
 
   }
 
-  private render_md = async () =>  {
+  private render_md = async (first_render: boolean = false) =>  {
 
-    if(this.value != this.editor_elem.value) {
-      const md = this.editor_elem.value;
+      const md = this.editor_elem.value.trim();
+      if (true) {
+        const html = micromark(md);
 
-      const html = micromark(md);
+        this.render_elem.innerHTML = html;
+        if (!first_render) {
+          this.value = md;
+          this.dispatchEvent(new CustomEvent('mp-markdown-update', { composed: true, bubbles: true, detail: html }));
+        }
+      }
 
-      this.render_elem.innerHTML = html;
-      this.value = md;
-      this.dispatchEvent(new CustomEvent('mp-markdown-update', { composed: true, bubbles: true, detail: html }));
-    }
+
+
 
 
   }
@@ -285,9 +291,9 @@ export class MarkdownEditor extends LitElement {
           <div part="editor-container" class="editor-container">
                <textarea part="edit-element"  class="md-editor ${classMap(showEditor)}"
                    @change=${this.liverender ? this.inputChanged : null}
-                   @keydown=${this.liverender ? this.keyUp : null} .value=${this.value}
+                   @keydown=${this.liverender ? this.keyUp : null}
               ></textarea>
-            <div part="render-element" class="md-render markdown-body ${classMap(showRender)}" ></div>
+            <div tabindex="-1" part="render-element" class="md-render markdown-body ${classMap(showRender)}" ></div>
           </div>
           <div class="button-container" style=${styleMap(buttonStyle)}>
               <mp-toggle-button part="button-edit" id="toggle_btn_editor" @mp-toggle-event=${this.toggleEditor} on>🖊️</mp-toggle-button>

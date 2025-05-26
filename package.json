@@ -21,6 +21,7 @@
     "server-start": "web-dev-server --open / --node-resolve"
   },
   "devDependencies": {
+    "api-viewer-element": "^1.0.0-pre.10",
     "esbuild": "^0.25.2",
     "ts-lit-plugin": "^2.0.2",
     "typescript": "^5.0.0"
@@ -30,5 +31,8 @@
     "lit": "^3.2.1",
     "micromark": "^4.0.2",
     "tslib": "^2.8.1"
+  },
+  "dependencies": {
+    "@custom-elements-manifest/analyzer": "^0.10.4"
   }
 }
