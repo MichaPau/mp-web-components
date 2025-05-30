@@ -2,142 +2,156 @@
 <html lang="en-US">
 
 <head>
-    <title>Web components playground</title>
-    <meta name="color-scheme" content="dark light">
+  <title>Web components playground</title>
+  <meta name="color-scheme" content="dark light">
 
-    <script type="module" src="../src/components/ui/mp-toggle-button.js"></script>
-    <script type="module" src="../src/components/ui/mp-multi-select.js"></script>
+  <script type="module" src="../src/components/ui/mp-toggle-button.js"></script>
+  <script type="module" src="../src/components/ui/mp-multi-select.js"></script>
 
-    <script type="module" src="../src/components/ui/mp-markdown-editor.js"></script>
-    <script type="module" src="../src/components/ui/test.js"></script>
+  <script type="module" src="../src/components/ui/mp-markdown-editor.js"></script>
+  <script type="module" src="../src/components/ui/test.js"></script>
 
-    <!-- <link rel="stylesheet" href="./styles/markdown-styles.css"> -->
-    <style>
-        :root {
-            /* --mp-font-size: 1.5rem;; */
-            font-size: 32px;
-        }
-        .light {
-            color-scheme: light;
-        }
-        .dark {
-            color-scheme: dark;
-        }
-        html, body {
-            margin: 0;
-            padding: 0;
-        }
-        body {
-             height: 100%;
-             margin: 0.5rem;
-        }
+  <!-- <link rel="stylesheet" href="./styles/markdown-styles.css"> -->
+  <style>
+    :root {
+      font-size: 32px;
+    }
 
-        .vertical, .horizontal {
-            gap: 0.5rem;
-            padding: 0.25rem;
-            * {
-                box-sizing: border-box;
-                display: block;
-            }
-            /* border: 1px solid cyan; */
-        }
-        .vertical {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            /* * {
+    .light {
+      color-scheme: light;
+    }
+
+    .dark {
+      color-scheme: dark;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      height: 100%;
+      margin: 0.5rem;
+    }
+
+    .vertical,
+    .horizontal {
+      gap: 0.5rem;
+      padding: 0.25rem;
+
+      * {
+        box-sizing: border-box;
+        display: block;
+      }
+
+      /* border: 1px solid cyan; */
+    }
+
+    .vertical {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      /* * {
                 height: auto;
             } */
 
-        }
-        .horizontal {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .main-container {
-            justify-content: flex-start;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-        }
-        .normal {
-            width: 100%;
-        }
-        .big {
-            min-height: 6rem;
-        }
+    }
 
-        /* mp-markdown-editor::part(editor-container) {
+    .horizontal {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .main-container {
+      justify-content: flex-start;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+    }
+
+    .normal {
+      width: 100%;
+    }
+
+    .big {
+      min-height: 6rem;
+    }
+
+    /* mp-markdown-editor::part(editor-container) {
             height: 5rem;
         } */
-        mp-markdown-editor, test-comp {
-            height: 5rem;
-        }
+    mp-markdown-editor,
+    test-comp {
+      height: 5rem;
+    }
 
-        test-comp::part(container) {
-            /* height: 5rem; */
-        }
-
-    </style>
+    test-comp::part(container) {
+      /* height: 5rem; */
+    }
+  </style>
 </head>
 <script>
-this.document.addEventListener("mp-markdown-update", (ev) => {
-  console.log("md update: ", ev.detail);
-});
-function changeColor() {
+  this.document.addEventListener("mp-markdown-update", (ev) => {
+    console.log("md update: ", ev.detail);
+  });
+  function changeColor() {
 
-  if (document.documentElement.style.getPropertyValue('color-scheme') === 'dark') {
-    document.documentElement.style.setProperty('color-scheme', 'light');
-  } else {
-    document.documentElement.style.setProperty('color-scheme', 'dark');
+    if (document.documentElement.style.getPropertyValue('color-scheme') === 'dark') {
+      document.documentElement.style.setProperty('color-scheme', 'light');
+    } else {
+      document.documentElement.style.setProperty('color-scheme', 'dark');
+    }
+
   }
-
-}
 </script>
+
 <body>
 
-    <!-- <test-comp></test-comp> -->
-    <div class="vertical main-container">
-        <div class="horizontal"><button onclick="changeColor()">color-scheme</button></div>
-        <test-comp></test-comp>
-        <mp-markdown-editor value="# header &#13;&#10;&#13;&#10;&#13;&#10; ## header2 &#13;&#10;&#13;&#10; ### header3"></mp-markdown-editor>
-        <mp-markdown-editor value="# second"></mp-markdown-editor>
-        <mp-markdown-editor value="# third"></mp-markdown-editor>
-        <div class="horizontal">
-            <mp-toggle-button>Toggle</mp-toggle-button>
-            <mp-toggle-button on>Toggle</mp-toggle-button>
-            <button>normal</button>
-        </div>
-        <div class="horizontal">
-            <mp-multi-select>
-                <option>one</option>
-                <option>two</option>
-                <option>three</option>
-                <option>four</option>
-                <option>five</option>
-                <option>six</option>
-                <option>seven</option>
-                <option>eight</option>
-            </mp-multi-select>
-            <mp-multi-select search-enabled>
-                <option>eins</option>
-                <option>zwei</option>
-                <option>drei</option>
-                <option>drei und halb</option>
-                <option>vier</option>
-                <option>fünf</option>
-                <option>sechs</option>
-                <option>sieben</option>
-            </mp-multi-select>
-            <select>
-                <option>test1</option>
-                <option>test2</option>
-                <option>test3</option>
-            </select>
-        </div>
-        <!-- <div class="normal">
+  <!-- <test-comp></test-comp> -->
+  <div class="vertical main-container">
+    <div class="horizontal"><button onclick="changeColor()">color-scheme</button></div>
+    <test-comp></test-comp>
+    <mp-markdown-editor
+      value="# header &#13;&#10;&#13;&#10;&#13;&#10; ## header2 &#13;&#10;&#13;&#10; ### header3"></mp-markdown-editor>
+    <mp-markdown-editor value="# second"></mp-markdown-editor>
+    <mp-markdown-editor value="# third"></mp-markdown-editor>
+    <div class="horizontal">
+      <mp-toggle-button>Toggle</mp-toggle-button>
+      <mp-toggle-button on>Toggle</mp-toggle-button>
+      <button>normal</button>
+    </div>
+    <div class="horizontal">
+      <mp-multi-select>
+        <option>one</option>
+        <option>two</option>
+        <option>three</option>
+        <option>four</option>
+        <option>five</option>
+        <option>six</option>
+        <option>seven</option>
+        <option>eight</option>
+      </mp-multi-select>
+      <mp-multi-select search-enabled>
+        <option>eins</option>
+        <option>zwei</option>
+        <option>drei</option>
+        <option>drei und halb</option>
+        <option>vier</option>
+        <option>fünf</option>
+        <option>sechs</option>
+        <option>sieben</option>
+      </mp-multi-select>
+      <select>
+        <option>test1</option>
+        <option>test2</option>
+        <option>test3</option>
+      </select>
+    </div>
+    <!-- <div class="normal">
         <mp-masonry-layout>
             <span>Masonry Layout</span>
             <div>Showcase</div>
@@ -149,7 +163,7 @@ function changeColor() {
             <img src="./img/image_6.jpg"/>
         </mp-masonry-layout>
         </div>-->
-    </div>
+  </div>
 
 
 </body>

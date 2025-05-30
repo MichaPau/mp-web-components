@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     // Enable latest features
-    "lib": ["ESNext", "DOM", "dom.iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "dom.iterable"
+    ],
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
@@ -20,13 +24,17 @@
     "declaration": true,
     "declarationMap": true,
     "useDefineForClassFields": false,
-    "plugins": [{ "name": "ts-lit-plugin" }],
+    "plugins": [
+      {
+        "name": "ts-lit-plugin"
+      }
+    ],
   },
   "include": [
-    "src/untracked/**/*.ts",
-    "src/components/ui/*.ts", 
-    "src/components/layouts/*.ts", 
-    "src/index.ts"],
+    // "src/untracked/**/*.ts",
+    "src/components/ui/*.ts",
+    "src/components/layouts/*.ts",
+    "src/index.ts"
+  ],
   "exclude": []
-
 }

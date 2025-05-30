@@ -11,27 +11,19 @@ import { customElement, property, state, query } from 'lit/decorators.js';
 export class ToggleButton extends LitElement {
   static styles = css`
       :host {
-          display: inline- block;
-
-          --__mp-border-on: var(--mp-border-on, 2px inset ButtonBorder);
-          --__mp-border-off: var(--mp-border-off, 2px outset ButtonBorder);
+          display: inline-block;
+          box-sizing: border-box;
       }
-      * {
-            box-sizing: border-box;
-        }
       button {
-          display: block;
-          border-radius: 4px;
-
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-
       .on {
-          border: var(--__mp-border-on);
           opacity: 1;
       }
       .off {
-          border: var(--__mp-border-off);
-          opacity: 0.75;
+          opacity: 0.5;
       }
 
       `;
