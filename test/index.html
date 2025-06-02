@@ -11,10 +11,11 @@
   <script type="module" src="../src/components/ui/mp-markdown-editor.js"></script>
   <script type="module" src="../src/components/ui/test.js"></script>
 
+  <script type="module" src="../src/components/tools/track_active_element.js"></script>
   <!-- <link rel="stylesheet" href="./styles/markdown-styles.css"> -->
   <style>
     :root {
-      font-size: 32px;
+      font-size: 16px;
     }
 
     .light {
@@ -92,6 +93,25 @@
     test-comp::part(container) {
       /* height: 5rem; */
     }
+
+    .tracker {
+      width: 50%;
+      position: fixed;
+      top: 1rem;
+
+      left: 50%;
+      transform: translate(-50%, 0%);
+      opacity: 0.5;
+
+      &:focus,
+      &:active {
+        opacity: 1;
+      }
+
+      &::part(textarea) {
+        height: 15rem;
+      }
+    }
   </style>
 </head>
 <script>
@@ -113,6 +133,7 @@
 
   <!-- <test-comp></test-comp> -->
   <div class="vertical main-container">
+    <track-active-element tabindex="0" class="tracker" css-value="3px dashed blue"></track-active-element>
     <div class="horizontal"><button onclick="changeColor()">color-scheme</button></div>
     <test-comp></test-comp>
     <mp-markdown-editor

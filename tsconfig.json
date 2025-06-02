@@ -34,6 +34,7 @@
     // "src/untracked/**/*.ts",
     "src/components/ui/*.ts",
     "src/components/layouts/*.ts",
+    "src/components/tools/*.ts",
     "src/index.ts"
   ],
   "exclude": []

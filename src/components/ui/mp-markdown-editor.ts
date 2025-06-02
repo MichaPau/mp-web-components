@@ -90,7 +90,7 @@ export class MarkdownEditor extends LitElement {
         padding: 0.25rem 0.25rem 0.5rem;
         min-height: 3rem;
 
-        --__mp-md-button-size: var(--mp-md-button-size, 0.8rem);
+        --__mp-md-button-size: var(--mp-md-button-size, 1.6rem);
 
 
         box-sizing: border-box;
@@ -247,13 +247,14 @@ export class MarkdownEditor extends LitElement {
   private render_md = async (first_render: boolean = false) =>  {
 
       const md = this.editor_elem.value.trim();
-      if (true) {
+      if (this.value != md || first_render) {
+        /* console.log("render, dispatch & co"); */
         const html = micromark(md);
 
         this.render_elem.innerHTML = html;
         if (!first_render) {
           this.value = md;
-          this.dispatchEvent(new CustomEvent('mp-markdown-update', { composed: true, bubbles: true, detail: html }));
+          this.dispatchEvent(new CustomEvent('mp-markdown-update', { composed: true, bubbles: true, detail: md}));
         }
       }
 
