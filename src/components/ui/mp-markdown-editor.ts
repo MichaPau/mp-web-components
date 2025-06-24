@@ -1,9 +1,9 @@
-import { CSSResult, CSSResultArray, CSSResultGroup, CSSResultOrNative, LitElement, PropertyValues, css, html,  } from 'lit';
+import { CSSResultGroup, LitElement, PropertyValues, css, html,  } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { customElement, property, state, query } from 'lit/decorators.js';
 import { unsafeCSS } from 'lit';
-import { adoptStyles } from 'lit';
+// import { adoptStyles } from 'lit';
 import { micromark } from 'micromark';
 // import { fromMarkdown, CompileContext } from 'mdast-util-from-markdown';
 
@@ -35,7 +35,7 @@ export class MarkdownEditor extends LitElement {
   @property({type: String, reflect: true})
   test = "/styles/markdown-styles.css";
 
-  @property({type: String, reflect: false})
+  @property({type: String, reflect: true})
   value = "";
 
   @property({type: Number, reflect: true })
@@ -60,21 +60,21 @@ export class MarkdownEditor extends LitElement {
   isFullscreen = false;
 
   @query(".md-editor")
-  editor_elem: HTMLTextAreaElement;
+  editor_elem!: HTMLTextAreaElement;
 
   @query(".md-render")
-  render_elem: HTMLElement;
+  render_elem!: HTMLElement;
 
   @query(".editor-container")
-  editor_container: HTMLElement;
+  editor_container!: HTMLElement;
 
   @query("#toggle_btn_editor")
-  toggl_btn_editor: ToggleButton;
+  toggl_btn_editor!: ToggleButton;
 
   @query("#toggle_btn_render")
-  toggl_btn_render: ToggleButton;
+  toggl_btn_render!: ToggleButton;
 
-  private timeout: ReturnType<typeof setTimeout>;
+  private timeout: ReturnType<typeof setTimeout> | null = null;
 
   static styles = [
     defaultStyleTokens,
@@ -99,9 +99,6 @@ export class MarkdownEditor extends LitElement {
             box-sizing: border-box;
         }
     }
-
-
-
     .main-container {
         display: flex;
         flex-direction: column;
@@ -181,25 +178,23 @@ export class MarkdownEditor extends LitElement {
 
   static override finalizeStyles(styles: CSSResultGroup) {
 
-    const style_elem: HTMLLinkElement = document.head.querySelector('link[data-style-name="mdstyle"]');
+    const elementStyles = super.finalizeStyles(styles);
+    const style_elem: HTMLLinkElement | null = document.head.querySelector('link[data-style-name="mdstyle"]');
 
     if( style_elem) {
-      let result = Array.from(style_elem.sheet.cssRules)
+      let result = Array.from(style_elem.sheet!.cssRules)
         .map(rule => rule.cssText || "")
         .join("\n");
 
-      this.styles.push(unsafeCSS(result));
+      elementStyles.push(unsafeCSS(result));
     }
-    return super.finalizeStyles(this.styles);
+    return elementStyles;
   }
+
   constructor() {
     super();
 
   }
-
-
-
-
   connectedCallback(): void {
     super.connectedCallback();
     document.addEventListener("fullscreenchange", this.fullscreenChangeHandler);
@@ -210,6 +205,13 @@ export class MarkdownEditor extends LitElement {
     super.disconnectedCallback();
     document.removeEventListener("fullscreenchange", this.fullscreenChangeHandler);
 
+  }
+
+  protected willUpdate(_changedProperties: PropertyValues): void {
+    if (_changedProperties.has('value')) {
+      this.editor_elem.value = this.value;
+      this.render_md(true);
+    }
   }
 
   protected firstUpdated(_changedProperties: PropertyValues): void {
@@ -257,11 +259,6 @@ export class MarkdownEditor extends LitElement {
           this.dispatchEvent(new CustomEvent('mp-markdown-update', { composed: true, bubbles: true, detail: md}));
         }
       }
-
-
-
-
-
   }
 
   toggleEditor(ev:Event) {
@@ -286,15 +283,6 @@ export class MarkdownEditor extends LitElement {
     this.isFullscreen = true;
     this.editor_container.requestFullscreen({ navigationUI: "show" });
   }
-
-  textOnScroll(source: HTMLElement, target: HTMLElement) {
-
-  }
-
-  testHandler(ev:Event) {
-
-  }
-
 
   render() {
     const buttonStyle = { justifyContent: this.justifyButtons};

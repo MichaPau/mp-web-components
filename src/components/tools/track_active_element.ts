@@ -4,7 +4,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 
 @customElement('track-active-element')
-export class TrackActiveElemnt extends LitElement {
+export class TrackActiveElement extends LitElement {
   static styles = [
     css `
       :host {
@@ -35,10 +35,11 @@ export class TrackActiveElemnt extends LitElement {
   cssValue:string = "2px solid red";
   
   @property({type: Number, attribute: "timeout-delay"})
-  timeoutDelay:number = 250;
+  timeoutDelay:number = 100;
 
   connectedCallback(): void {
     super.connectedCallback();
+    // document.addEventListener("keydown", this.onKeyDown);
 
   }
   disconnectedCallback(): void {
@@ -53,6 +54,11 @@ export class TrackActiveElemnt extends LitElement {
   }
   stop() {
     clearInterval(this.interval);
+  }
+  onKeyDown = (ev: KeyboardEvent) => {
+    if (ev.key === "Tab") {
+      this.updateInterval();      
+    }
   }
   updateInterval() {
 
@@ -113,6 +119,6 @@ export class TrackActiveElemnt extends LitElement {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    'track-active-element': TrackActiveElemnt ;
+    'track-active-element': TrackActiveElement ;
   }
 }
